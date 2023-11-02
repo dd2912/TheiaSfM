@@ -305,7 +305,7 @@ bool ReconstructionBuilder::ExtractAndMatchFeatures() {
   // Add the matches to the view graph and reconstruction.
   std::cout << "==============================================" << std::endl;
 
-  std::ofstream outFile(graph_file);
+  std::ofstream outFile(graph_file.c_str());
   const auto& match_keys =
       features_and_matches_database_->ImageNamesOfMatches();
   for (const auto& match_key : match_keys) {

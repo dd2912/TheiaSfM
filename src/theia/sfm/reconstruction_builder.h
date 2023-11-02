@@ -102,6 +102,9 @@ struct ReconstructionBuilderOptions {
   // valid writeable directory.
   std::string features_and_matches_database_directory = "";
 
+
+  std::string graph_file;
+
   // Matching strategy type.
   // See //theia/matching/create_feature_matcher.h
   MatchingStrategy matching_strategy = MatchingStrategy::BRUTE_FORCE;
