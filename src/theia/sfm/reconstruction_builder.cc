@@ -38,6 +38,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <fstream>
 
 #include "theia/matching/features_and_matches_database.h"
 #include "theia/matching/image_pair_match.h"
