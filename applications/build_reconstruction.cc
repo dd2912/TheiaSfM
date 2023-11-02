@@ -403,7 +403,7 @@ void AddMatchesToReconstructionBuilder(FeaturesAndMatchesDatabase* features_and_
     const auto camera_intrinsics_prior =
         features_and_matches_database->GetCameraIntrinsicsPrior(camera_calibrations_names[i]);
     
-    std::cout << camera_calibrations_names[i] << endl;
+    std::cout << camera_calibrations_names[i] << std::endl;
     reconstruction_builder->AddImageWithCameraIntrinsicsPrior(
         camera_calibrations_names[i],
         camera_intrinsics_prior,
