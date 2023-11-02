@@ -296,7 +296,7 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   summary.message = string_stream.str();
 
   std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-  std::ofstream outFile(graph_file.c_str());
+  std::ofstream outFile(pose_file.c_str());
   if (outFile.is_open()) {
     for (const auto& pair : orientations_) {
         ViewId viewId = pair.first;
