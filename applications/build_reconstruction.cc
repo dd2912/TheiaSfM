@@ -271,13 +271,16 @@ using theia::ReconstructionBuilderOptions;
 ReconstructionBuilderOptions SetReconstructionBuilderOptions() {
   ReconstructionBuilderOptions options;
   options.num_threads = FLAGS_num_threads;
+  
+  //where to store graph
+  const std::string graph_file = FLAGS_output_reconstruction.c_str();
+  options.graph_file = graph_file;
+
 
   options.descriptor_type = StringToDescriptorExtractorType(FLAGS_descriptor);
   options.feature_density = StringToFeatureDensity(FLAGS_feature_density);
-  options.features_and_matches_database_directory =
-      FLAGS_matching_working_directory;
-  options.matching_strategy =
-      StringToMatchingStrategyType(FLAGS_matching_strategy);
+  options.features_and_matches_database_directory = FLAGS_matching_working_directory;
+  options.matching_strategy = StringToMatchingStrategyType(FLAGS_matching_strategy);
   options.matching_options.lowes_ratio = FLAGS_lowes_ratio;
   options.matching_options.keep_only_symmetric_matches =
       FLAGS_keep_only_symmetric_matches;
