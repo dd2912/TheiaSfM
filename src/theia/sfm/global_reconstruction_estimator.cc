@@ -291,6 +291,19 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
       << global_estimator_timings.position_estimation_time;
   summary.message = string_stream.str();
 
+  std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+
+  for (const auto& pair : orientations_) {
+      ViewId viewId = pair.first;
+      const Eigen::Vector3d& orientation = pair.second;
+
+      // Check if the key exists in both maps
+      if (positions_.find(viewId) != positions_.end()) {
+          const Eigen::Vector3d& position = positions_[viewId];
+          std::cout << viewId << " " << orientation << " " << position << std::endl;
+      }
+  }
+
   return summary;
 }
 
