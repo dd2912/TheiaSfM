@@ -302,12 +302,14 @@ bool ReconstructionBuilder::ExtractAndMatchFeatures() {
   ///////////////////////////////////
 
   // Add the matches to the view graph and reconstruction.
+  std::cout << "==============================================" << std::endl;
   const auto& match_keys =
       features_and_matches_database_->ImageNamesOfMatches();
   for (const auto& match_key : match_keys) {
     const ImagePairMatch& match =
         features_and_matches_database_->GetImagePairMatch(match_key.first,
                                                           match_key.second);
+    std::cout << match_key.first << " " << match_key.second << std::endl;
     AddTwoViewMatch(match_key.first, match_key.second, match);
   }
 

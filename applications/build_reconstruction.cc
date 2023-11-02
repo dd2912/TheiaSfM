@@ -398,12 +398,10 @@ void AddMatchesToReconstructionBuilder(FeaturesAndMatchesDatabase* features_and_
   LOG(INFO) << "Loading " << camera_calibrations_names.size()
             << " intrinsics priors from the DB.";
 
-  std::cout << "=======================================" << std::endl;
   for (int i = 0; i < camera_calibrations_names.size(); i++) {
     const auto camera_intrinsics_prior =
         features_and_matches_database->GetCameraIntrinsicsPrior(camera_calibrations_names[i]);
-    
-    std::cout << camera_calibrations_names[i] << std::endl;
+
     reconstruction_builder->AddImageWithCameraIntrinsicsPrior(
         camera_calibrations_names[i],
         camera_intrinsics_prior,
@@ -436,8 +434,7 @@ void AddImagesToReconstructionBuilder(
   }
   
   // Load calibration file if it is provided.
-  std::unordered_map<std::string, theia::CameraIntrinsicsPrior>
-      camera_intrinsics_prior;
+  std::unordered_map<std::string, theia::CameraIntrinsicsPrior> camera_intrinsics_prior;
   if (FLAGS_calibration_file.size() != 0) {
     CHECK(theia::ReadCalibration(FLAGS_calibration_file,
                                  &camera_intrinsics_prior))
@@ -457,8 +454,7 @@ void AddImagesToReconstructionBuilder(
     std::string image_filename;
     CHECK(theia::GetFilenameFromFilepath(image_file, true, &image_filename));
 
-    const theia::CameraIntrinsicsPrior* image_camera_intrinsics_prior =
-        FindOrNull(camera_intrinsics_prior, image_filename);
+    const theia::CameraIntrinsicsPrior* image_camera_intrinsics_prior = FindOrNull(camera_intrinsics_prior, image_filename);
     if (image_camera_intrinsics_prior != nullptr) {
       CHECK(reconstruction_builder->AddImageWithCameraIntrinsicsPrior(
           image_file, *image_camera_intrinsics_prior, intrinsics_group_id));
