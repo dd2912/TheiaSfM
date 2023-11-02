@@ -273,7 +273,7 @@ ReconstructionBuilderOptions SetReconstructionBuilderOptions() {
   options.num_threads = FLAGS_num_threads;
   
   //where to store graph
-  options.graph_file = FLAGS_graph_file.c_str();
+  options.graph_file = FLAGS_graph_file;
 
 
   options.descriptor_type = StringToDescriptorExtractorType(FLAGS_descriptor);
@@ -349,6 +349,9 @@ ReconstructionBuilderOptions SetReconstructionBuilderOptions() {
   reconstruction_estimator_options
       .refine_camera_positions_and_points_after_position_estimation =
       FLAGS_refine_camera_positions_and_points_after_position_estimation;
+
+  //// add pose file
+  reconstruction_estimator_options.pose_file = FLAGS_pose_file;
 
   // Incremental SfM Options.
   reconstruction_estimator_options.absolute_pose_reprojection_error_threshold =

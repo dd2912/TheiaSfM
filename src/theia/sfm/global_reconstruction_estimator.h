@@ -101,6 +101,8 @@ class GlobalReconstructionEstimator : public ReconstructionEstimator {
   std::unordered_map<ViewId, Eigen::Vector3d> orientations_;
   std::unordered_map<ViewId, Eigen::Vector3d> positions_;
 
+  std::string pose_file;
+
   DISALLOW_COPY_AND_ASSIGN(GlobalReconstructionEstimator);
 };
 

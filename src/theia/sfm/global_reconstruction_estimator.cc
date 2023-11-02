@@ -31,6 +31,7 @@
 //
 // Please contact the author of this library if you have any questions.
 // Author: Chris Sweeney (cmsweeney@cs.ucsb.edu)
+#include <fstream>
 
 #include "theia/sfm/global_reconstruction_estimator.h"
 
@@ -109,6 +110,9 @@ void SetUnderconstrainedAsUnestimated(Reconstruction* reconstruction) {
 GlobalReconstructionEstimator::GlobalReconstructionEstimator(
     const ReconstructionEstimatorOptions& options) {
   options_ = options;
+  //added file
+  pose_file = options.pose_file;
+
   translation_filter_options_ = SetRelativeTranslationFilteringOptions(options);
   options_.nonlinear_position_estimator_options.rng = options.rng;
   options_.nonlinear_position_estimator_options.num_threads =
@@ -292,15 +296,18 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   summary.message = string_stream.str();
 
   std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-  for (const auto& pair : orientations_) {
-      ViewId viewId = pair.first;
-      const Eigen::Vector3d& orientation = pair.second;
+  std::ofstream outFile(graph_file.c_str());
+  if (outFile.is_open()) {
+    for (const auto& pair : orientations_) {
+        ViewId viewId = pair.first;
+        const Eigen::Vector3d& orientation = pair.second;
 
-      // Check if the key exists in both maps
-      if (positions_.find(viewId) != positions_.end()) {
-          const Eigen::Vector3d& position = positions_[viewId];
-          std::cout << viewId << " " << orientation.transpose() << " " << position.transpose() << std::endl;
-      }
+        // Check if the key exists in both maps
+        if (positions_.find(viewId) != positions_.end()) {
+            const Eigen::Vector3d& position = positions_[viewId];
+            outFile << viewId << " " << orientation.transpose() << " " << position.transpose() << std::endl;
+        }
+    }
   }
 
   return summary;
