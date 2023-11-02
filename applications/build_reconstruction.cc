@@ -384,26 +384,26 @@ ReconstructionBuilderOptions SetReconstructionBuilderOptions() {
   return options;
 }
 
-void AddMatchesToReconstructionBuilder(
-    FeaturesAndMatchesDatabase* features_and_matches_database,
-    ReconstructionBuilder* reconstruction_builder) {
+void AddMatchesToReconstructionBuilder(FeaturesAndMatchesDatabase* features_and_matches_database,
+                                       ReconstructionBuilder* reconstruction_builder) {
   // Add all the views. When the intrinsics group id is invalid, the
   // reconstruction builder will assume that the view does not share its
   // intrinsics with any other views.
-  theia::CameraIntrinsicsGroupId intrinsics_group_id =
-      theia::kInvalidCameraIntrinsicsGroupId;
+  theia::CameraIntrinsicsGroupId intrinsics_group_id = theia::kInvalidCameraIntrinsicsGroupId;
   if (FLAGS_shared_calibration) {
     intrinsics_group_id = 0;
   }
 
-  const auto camera_calibrations_names =
-      features_and_matches_database->ImageNamesOfCameraIntrinsicsPriors();
+  const auto camera_calibrations_names = features_and_matches_database->ImageNamesOfCameraIntrinsicsPriors();
   LOG(INFO) << "Loading " << camera_calibrations_names.size()
             << " intrinsics priors from the DB.";
+
+  std::cout "======================================="<<std:endl;
   for (int i = 0; i < camera_calibrations_names.size(); i++) {
     const auto camera_intrinsics_prior =
-        features_and_matches_database->GetCameraIntrinsicsPrior(
-            camera_calibrations_names[i]);
+        features_and_matches_database->GetCameraIntrinsicsPrior(camera_calibrations_names[i]);
+    
+    std::cout << camera_calibrations_names[i] << endl;
     reconstruction_builder->AddImageWithCameraIntrinsicsPrior(
         camera_calibrations_names[i],
         camera_intrinsics_prior,
