@@ -398,7 +398,7 @@ void AddMatchesToReconstructionBuilder(FeaturesAndMatchesDatabase* features_and_
   LOG(INFO) << "Loading " << camera_calibrations_names.size()
             << " intrinsics priors from the DB.";
 
-  std::cout "======================================="<<std:endl;
+  std::cout << "======================================="<<std:endl;
   for (int i = 0; i < camera_calibrations_names.size(); i++) {
     const auto camera_intrinsics_prior =
         features_and_matches_database->GetCameraIntrinsicsPrior(camera_calibrations_names[i]);
