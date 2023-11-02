@@ -167,6 +167,7 @@ ReconstructionBuilder::ReconstructionBuilder(
   CHECK_GT(options.num_threads, 0);
 
   options_.reconstruction_estimator_options.rng = options.rng;
+  graph_file = options.graph_file;
 
   reconstruction_.reset(new Reconstruction());
   view_graph_.reset(new ViewGraph());
@@ -303,13 +304,17 @@ bool ReconstructionBuilder::ExtractAndMatchFeatures() {
 
   // Add the matches to the view graph and reconstruction.
   std::cout << "==============================================" << std::endl;
+
+  std::ofstream outFile(graph_file);
   const auto& match_keys =
       features_and_matches_database_->ImageNamesOfMatches();
   for (const auto& match_key : match_keys) {
     const ImagePairMatch& match =
         features_and_matches_database_->GetImagePairMatch(match_key.first,
                                                           match_key.second);
-    std::cout << match_key.first << " " << match_key.second << std::endl;
+    if (outFile.is_open()) {
+      outFile << match_key.first << " " << match_key.second << std::endl;
+    }
     AddTwoViewMatch(match_key.first, match_key.second, match);
   }
 

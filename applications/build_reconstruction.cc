@@ -55,6 +55,8 @@ DEFINE_string(
     "",
     "Filename to write reconstruction to. The filename will be appended with "
     "the reconstruction number if multiple reconstructions are created.");
+DEFINE_string(graph_file, "", "Filename to write graph");
+DEFINE_string(pose_file, "", "Filename to write global pose");
 
 // Multithreading.
 DEFINE_int32(num_threads,

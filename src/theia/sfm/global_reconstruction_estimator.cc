@@ -292,7 +292,6 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   summary.message = string_stream.str();
 
   std::cout << "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
-
   for (const auto& pair : orientations_) {
       ViewId viewId = pair.first;
       const Eigen::Vector3d& orientation = pair.second;

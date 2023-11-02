@@ -215,6 +215,9 @@ class ReconstructionBuilder {
   std::unique_ptr<FeatureExtractorAndMatcher> feature_extractor_and_matcher_;
 
   DISALLOW_COPY_AND_ASSIGN(ReconstructionBuilder);
+
+  // write view file
+  std::string graph_file;
 };
 }  // namespace theia
 
