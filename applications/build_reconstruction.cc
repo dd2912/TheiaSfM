@@ -273,7 +273,7 @@ ReconstructionBuilderOptions SetReconstructionBuilderOptions() {
   options.num_threads = FLAGS_num_threads;
   
   //where to store graph
-  options.graph_file = FLAGS_output_reconstruction.c_str();
+  options.graph_file = FLAGS_graph_file.c_str();
 
 
   options.descriptor_type = StringToDescriptorExtractorType(FLAGS_descriptor);
