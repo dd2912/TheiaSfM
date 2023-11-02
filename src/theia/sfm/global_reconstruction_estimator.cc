@@ -300,7 +300,7 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
       // Check if the key exists in both maps
       if (positions_.find(viewId) != positions_.end()) {
           const Eigen::Vector3d& position = positions_[viewId];
-          std::cout << viewId << " " << orientation << " " << position << std::endl;
+          std::cout << viewId << " " << orientation.transpose() << " " << position.transpose() << std::endl;
       }
   }
 
