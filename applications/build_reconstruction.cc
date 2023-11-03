@@ -351,7 +351,7 @@ ReconstructionBuilderOptions SetReconstructionBuilderOptions() {
       FLAGS_refine_camera_positions_and_points_after_position_estimation;
 
   //// add pose file
-  reconstruction_estimator_options.pose_file = FLAGS_pose_file;
+  reconstruction_estimator_options.global_rotation_estimator_type.pose_file = FLAGS_pose_file;
 
   // Incremental SfM Options.
   reconstruction_estimator_options.absolute_pose_reprojection_error_threshold =
