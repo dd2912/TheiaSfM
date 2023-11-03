@@ -164,6 +164,9 @@ struct ReconstructionEstimatorOptions {
   // orientation and intrinsics constant.
   bool refine_camera_positions_and_points_after_position_estimation = true;
 
+  // added
+  std::string pose_file;
+
   // --------------------- Incremental SfM Options --------------------- //
 
   // If M is the maximum number of 3D points observed by any view, we want to
