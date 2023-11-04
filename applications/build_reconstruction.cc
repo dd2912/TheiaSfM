@@ -427,8 +427,8 @@ void AddMatchesToReconstructionBuilder(FeaturesAndMatchesDatabase* features_and_
   }
 }
 
-void AddImagesToReconstructionBuilder(
-    ReconstructionBuilder* reconstruction_builder) {
+void AddImagesToReconstructionBuilder(ReconstructionBuilder* reconstruction_builder) {
+    
   std::vector<std::string> image_files;
   CHECK(theia::GetFilepathsFromWildcard(FLAGS_images, &image_files))
       << "Could not find images that matched the filepath: " << FLAGS_images
