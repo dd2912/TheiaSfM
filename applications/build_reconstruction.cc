@@ -434,6 +434,10 @@ void AddImagesToReconstructionBuilder(ReconstructionBuilder* reconstruction_buil
       << "Could not find images that matched the filepath: " << FLAGS_images
       << ". NOTE that the ~ filepath is not supported.";
 
+
+  for (auto s : image_files){
+    std::cout << s<< std::endl;
+  }
   CHECK_GT(image_files.size(), 0) << "No images found in: " << FLAGS_images;
 
   if (image_files.size() > FLAGS_max_num_images) {
