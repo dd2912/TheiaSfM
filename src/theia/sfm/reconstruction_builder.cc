@@ -66,7 +66,7 @@ bool AddViewToReconstruction(const std::string& image_filepath,
                              Reconstruction* reconstruction) {
   std::string image_filename;
   CHECK(GetFilenameFromFilepath(image_filepath, true, &image_filename));
-  std::cout << "******************\n" << image_filepath << "\n***********************" << std:endl;
+  std::cout << "******************\n" << image_filepath << "\n***********************" << std::endl;
   // Add the image to the reconstruction.
   ViewId view_id;
   if (intrinsics_group_id == kInvalidCameraIntrinsicsGroupId) {
