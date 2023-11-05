@@ -436,6 +436,9 @@ void AddImagesToReconstructionBuilder(
 
   CHECK_GT(image_files.size(), 0) << "No images found in: " << FLAGS_images;
 
+  // Sort the image files by alphabetical order
+  std::sort(image_files.begin(), image_files.end());
+
   if (image_files.size() > FLAGS_max_num_images) {
     image_files.resize(FLAGS_max_num_images);
   }
