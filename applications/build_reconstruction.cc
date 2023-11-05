@@ -434,10 +434,9 @@ void AddImagesToReconstructionBuilder(ReconstructionBuilder* reconstruction_buil
       << "Could not find images that matched the filepath: " << FLAGS_images
       << ". NOTE that the ~ filepath is not supported.";
 
+  // image_files -> string of full path in accd order
+  std::sort(image_files.begin(), image_files.end());
 
-  for (auto s : image_files){
-    std::cout << s<< std::endl;
-  }
   CHECK_GT(image_files.size(), 0) << "No images found in: " << FLAGS_images;
 
   if (image_files.size() > FLAGS_max_num_images) {
@@ -464,7 +463,7 @@ void AddImagesToReconstructionBuilder(ReconstructionBuilder* reconstruction_buil
   for (const std::string& image_file : image_files) {
     std::string image_filename;
     CHECK(theia::GetFilenameFromFilepath(image_file, true, &image_filename));
-
+    
     const theia::CameraIntrinsicsPrior* image_camera_intrinsics_prior = FindOrNull(camera_intrinsics_prior, image_filename);
     if (image_camera_intrinsics_prior != nullptr) {
       CHECK(reconstruction_builder->AddImageWithCameraIntrinsicsPrior(
