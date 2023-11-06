@@ -248,25 +248,33 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
                                       positions_,
                                       reconstruction_);
 
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-  std::cout << "brfore step 8: " << positions_.size() << std::endl;
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+  
   // Always triangulate once, then retriangulate and remove outliers depending
   // on the reconstruciton estimator options.
   for (int i = 0; i < options_.num_retriangulation_iterations + 1; i++) {
+
+    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+    std::cout << "brfore step 8 iter : " << i << positions_.size() << std::endl;
+    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
     // Step 8. Triangulate features.
     LOG(INFO) << "Triangulating all features.";
     timer.Reset();
     EstimateStructure();
     summary.triangulation_time += timer.ElapsedTimeInSeconds();
 
-    SetUnderconstrainedAsUnestimated(reconstruction_);
+    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+    std::cout << "brfore SetUnderconstrainedAsUnestimated iter : " << i << positions_.size() << std::endl;
+    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
 
+    SetUnderconstrainedAsUnestimated(reconstruction_);
+    
+    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+    std::cout << "brfore partial bundle adjustment iter : " << i << positions_.size() << std::endl;
+    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
     // Do a single step of bundle adjustment where only the camera positions and
     // 3D points are refined. This is only done for the very first bundle
     // adjustment iteration.
-    if (i == 0 &&
-        options_.refine_camera_positions_and_points_after_position_estimation) {
+    if (i == 0 && options_.refine_camera_positions_and_points_after_position_estimation) {
       LOG(INFO) << "Performing partial bundle adjustment to optimize only the "
                    "camera positions and 3d points.";
       timer.Reset();
@@ -274,7 +282,9 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
       summary.bundle_adjustment_time += timer.ElapsedTimeInSeconds();
     }
 
-    
+    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+    std::cout << "brfore step 9 iter : " << i << positions_.size() << std::endl;
+    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
     // Step 9. Bundle Adjustment.
     LOG(INFO) << "Performing bundle adjustment.";
     timer.Reset();
