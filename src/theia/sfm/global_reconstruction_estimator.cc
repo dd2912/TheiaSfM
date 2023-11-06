@@ -151,6 +151,11 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   Timer total_timer;
   Timer timer;
 
+
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+  sts::cout << "brfore step 1: " << view_graph_->NumEdges() << std::endl;
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+
   // Step 1. Filter the initial view graph and remove any bad two view
   // geometries.
   LOG(INFO) << "Filtering the intial view graph.";
@@ -162,12 +167,18 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   global_estimator_timings.initial_view_graph_filtering_time =
       timer.ElapsedTimeInSeconds();
 
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+  sts::cout << "brfore step 2: " << view_graph_->NumEdges() << std::endl;
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
   // Step 2. Calibrate any uncalibrated cameras.
   LOG(INFO) << "Calibrating any uncalibrated cameras.";
   timer.Reset();
   CalibrateCameras();
   summary.camera_intrinsics_calibration_time = timer.ElapsedTimeInSeconds();
 
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+  sts::cout << "brfore step 3: " << view_graph_->NumEdges() << std::endl;
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
   // Step 3. Estimate global rotations.
   LOG(INFO) << "Estimating the global rotations of all cameras.";
   timer.Reset();
@@ -179,6 +190,9 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   global_estimator_timings.rotation_estimation_time =
       timer.ElapsedTimeInSeconds();
 
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+  sts::cout << "brfore step 4: " << view_graph_->NumEdges() << std::endl;
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
   // Step 4. Filter bad rotations.
   LOG(INFO) << "Filtering any bad rotation estimations.";
   timer.Reset();
@@ -186,6 +200,9 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   global_estimator_timings.rotation_filtering_time =
       timer.ElapsedTimeInSeconds();
 
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+  sts::cout << "brfore step 5: " << view_graph_->NumEdges() << std::endl;
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
   // Step 5. Optimize relative translations.
   LOG(INFO) << "Optimizing the pairwise translation estimations.";
   timer.Reset();
@@ -193,6 +210,9 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   global_estimator_timings.relative_translation_optimization_time =
       timer.ElapsedTimeInSeconds();
 
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+  sts::cout << "brfore step 6: " << view_graph_->NumEdges() << std::endl;
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
   // Step 6. Filter bad relative translations.
   LOG(INFO) << "Filtering any bad relative translations.";
   timer.Reset();
@@ -200,6 +220,9 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   global_estimator_timings.relative_translation_filtering_time =
       timer.ElapsedTimeInSeconds();
 
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+  sts::cout << "brfore step 7: " << view_graph_->NumEdges() << std::endl;
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
   // Step 7. Estimate global positions.
   LOG(INFO) << "Estimating the positions of all cameras.";
   timer.Reset();
@@ -225,7 +248,9 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
                                       positions_,
                                       reconstruction_);
 
-
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+  sts::cout << "brfore step 8: " << view_graph_->NumEdges() << std::endl;
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
   // Always triangulate once, then retriangulate and remove outliers depending
   // on the reconstruciton estimator options.
   for (int i = 0; i < options_.num_retriangulation_iterations + 1; i++) {
@@ -249,7 +274,7 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
       summary.bundle_adjustment_time += timer.ElapsedTimeInSeconds();
     }
 
-
+    
     // Step 9. Bundle Adjustment.
     LOG(INFO) << "Performing bundle adjustment.";
     timer.Reset();
@@ -266,7 +291,9 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
         reconstruction_);
     LOG(INFO) << num_points_removed << " outlier points were removed.";
   }
-
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+  sts::cout << "after step 9: " << view_graph_->NumEdges() << std::endl;
+  sts::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
   // Set the output parameters.
   GetEstimatedViewsFromReconstruction(*reconstruction_,
                                       &summary.estimated_views);

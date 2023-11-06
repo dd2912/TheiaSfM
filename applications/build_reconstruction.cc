@@ -430,6 +430,7 @@ void AddMatchesToReconstructionBuilder(FeaturesAndMatchesDatabase* features_and_
 void AddImagesToReconstructionBuilder(ReconstructionBuilder* reconstruction_builder) {
     
   std::vector<std::string> image_files;
+
   CHECK(theia::GetFilepathsFromWildcard(FLAGS_images, &image_files))
       << "Could not find images that matched the filepath: " << FLAGS_images
       << ". NOTE that the ~ filepath is not supported.";
@@ -446,16 +447,13 @@ void AddImagesToReconstructionBuilder(ReconstructionBuilder* reconstruction_buil
   // Load calibration file if it is provided.
   std::unordered_map<std::string, theia::CameraIntrinsicsPrior> camera_intrinsics_prior;
   if (FLAGS_calibration_file.size() != 0) {
-    CHECK(theia::ReadCalibration(FLAGS_calibration_file,
-                                 &camera_intrinsics_prior))
-        << "Could not read calibration file.";
+    CHECK(theia::ReadCalibration(FLAGS_calibration_file, &camera_intrinsics_prior)) << "Could not read calibration file.";
   }
 
   // Add images with possible calibration. When the intrinsics group id is
   // invalid, the reconstruction builder will assume that the view does not
   // share its intrinsics with any other views.
-  theia::CameraIntrinsicsGroupId intrinsics_group_id =
-      theia::kInvalidCameraIntrinsicsGroupId;
+  theia::CameraIntrinsicsGroupId intrinsics_group_id = theia::kInvalidCameraIntrinsicsGroupId;
   if (FLAGS_shared_calibration) {
     intrinsics_group_id = 0;
   }
@@ -514,19 +512,15 @@ int main(int argc, char* argv[]) {
 
   // Initialize the features and matches database.
   std::unique_ptr<FeaturesAndMatchesDatabase> features_and_matches_database(
-      new theia::RocksDbFeaturesAndMatchesDatabase(
-          FLAGS_matching_working_directory));
+      new theia::RocksDbFeaturesAndMatchesDatabase(FLAGS_matching_working_directory));
 
   // Create the reconstruction builder.
-  const ReconstructionBuilderOptions options =
-      SetReconstructionBuilderOptions();
-  ReconstructionBuilder reconstruction_builder(
-      options, features_and_matches_database.get());
+  const ReconstructionBuilderOptions options = SetReconstructionBuilderOptions();
+  ReconstructionBuilder reconstruction_builder(options, features_and_matches_database.get());
 
   // If matches are provided, load matches otherwise load images.
   if (features_and_matches_database->NumMatches() > 0) {
-    AddMatchesToReconstructionBuilder(features_and_matches_database.get(),
-                                      &reconstruction_builder);
+    AddMatchesToReconstructionBuilder(features_and_matches_database.get(), &reconstruction_builder);
   } else if (FLAGS_images.size() != 0) {
     AddImagesToReconstructionBuilder(&reconstruction_builder);
   } else {
@@ -535,14 +529,11 @@ int main(int argc, char* argv[]) {
   }
 
   std::vector<Reconstruction*> reconstructions;
-  CHECK(reconstruction_builder.BuildReconstruction(&reconstructions))
-      << "Could not create a reconstruction.";
+  CHECK(reconstruction_builder.BuildReconstruction(&reconstructions)) << "Could not create a reconstruction.";
 
   for (int i = 0; i < reconstructions.size(); i++) {
-    const std::string output_file =
-        theia::StringPrintf("%s-%d", FLAGS_output_reconstruction.c_str(), i);
+    const std::string output_file = theia::StringPrintf("%s-%d", FLAGS_output_reconstruction.c_str(), i);
     LOG(INFO) << "Writing reconstruction " << i << " to " << output_file;
-    CHECK(theia::WriteReconstruction(*reconstructions[i], output_file))
-        << "Could not write reconstruction to file.";
+    CHECK(theia::WriteReconstruction(*reconstructions[i], output_file)) << "Could not write reconstruction to file.";
   }
 }

@@ -96,8 +96,7 @@ ViewId Reconstruction::AddView(const std::string& view_name) {
   return view_id;
 }
 
-ViewId Reconstruction::AddView(const std::string& view_name,
-                               const CameraIntrinsicsGroupId group_id) {
+ViewId Reconstruction::AddView(const std::string& view_name, const CameraIntrinsicsGroupId group_id) {
   if (ContainsKey(view_name_to_id_, view_name)) {
     LOG(WARNING) << "Could not add view with the name " << view_name
                  << " because that name already exists in the reconstruction.";
@@ -115,8 +114,7 @@ ViewId Reconstruction::AddView(const std::string& view_name,
   // If the camera intrinsics group already exists, set the internal intrinsics
   // of each camera to point to the same underlying intrinsics.
   if (camera_intrinsics_groups_[group_id].size() > 0) {
-    const ViewId view_id_in_intrinsics_group =
-        *camera_intrinsics_groups_[group_id].begin();
+    const ViewId view_id_in_intrinsics_group = *camera_intrinsics_groups_[group_id].begin();
     const Camera& intrinsics_group_camera =
         FindOrDie(views_, view_id_in_intrinsics_group).Camera();
 

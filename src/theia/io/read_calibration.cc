@@ -300,8 +300,8 @@ bool ExtractCameraIntrinsicPriorsFromJson(
 }
 
 bool ReadCalibration(const std::string& calibration_file,
-                     std::unordered_map<std::string, CameraIntrinsicsPrior>*
-                         camera_intrinsics_priors) {
+                           std::unordered_map<std::string, CameraIntrinsicsPrior>* camera_intrinsics_priors) {
+                            
   // Get the size of the file.
   const size_t buffer_size = stlplus::file_size(calibration_file);
 

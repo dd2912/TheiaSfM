@@ -231,19 +231,15 @@ bool ReconstructionBuilder::AddImageWithCameraIntrinsicsPrior(
 }
 
 bool ReconstructionBuilder::AddImageWithCameraIntrinsicsPrior(
-    const std::string& image_filepath,
-    const CameraIntrinsicsPrior& camera_intrinsics_prior,
-    const CameraIntrinsicsGroupId camera_intrinsics_group) {
+                                  const std::string& image_filepath,
+                                  const CameraIntrinsicsPrior& camera_intrinsics_prior,
+                                  const CameraIntrinsicsGroupId camera_intrinsics_group) {
   
   image_filepaths_.emplace_back(image_filepath);
-  if (!AddViewToReconstruction(image_filepath,
-                               &camera_intrinsics_prior,
-                               camera_intrinsics_group,
-                               reconstruction_.get())) {
+  if (!AddViewToReconstruction(image_filepath, &camera_intrinsics_prior, camera_intrinsics_group, reconstruction_.get())) {
     return false;
   }
-  return feature_extractor_and_matcher_->AddImage(image_filepath,
-                                                  camera_intrinsics_prior);
+  return feature_extractor_and_matcher_->AddImage(image_filepath, camera_intrinsics_prior);
 }
 
 void ReconstructionBuilder::RemoveUncalibratedViews() {
@@ -277,24 +273,19 @@ bool ReconstructionBuilder::ExtractAndMatchFeatures() {
   feature_extractor_and_matcher_.release();
 
   // Log how many view pairs were geometrically verified.
-  const int num_total_view_pairs =
-      image_filepaths_.size() * (image_filepaths_.size() - 1) / 2;
+  const int num_total_view_pairs = image_filepaths_.size() * (image_filepaths_.size() - 1) / 2;
   LOG(INFO) << features_and_matches_database_->NumMatches() << " of "
             << num_total_view_pairs
             << " view pairs were matched and geometrically verified.";
 
   // Add the EXIF metadata to each view.
   std::vector<std::string> image_filenames(image_filepaths_.size());
-  const auto image_names_of_calibration =
-      features_and_matches_database_->ImageNamesOfCameraIntrinsicsPriors();
+  const auto image_names_of_calibration = features_and_matches_database_->ImageNamesOfCameraIntrinsicsPriors();
   for (int i = 0; i < image_names_of_calibration.size(); i++) {
     // Add the camera intrinsic prior information to the view.
-    const ViewId view_id =
-        reconstruction_->ViewIdFromName(image_names_of_calibration[i]);
+    const ViewId view_id = reconstruction_->ViewIdFromName(image_names_of_calibration[i]);
     View* view = reconstruction_->MutableView(view_id);
-    const auto intrinsics_prior =
-        features_and_matches_database_->GetCameraIntrinsicsPrior(
-            image_names_of_calibration[i]);
+    const auto intrinsics_prior = features_and_matches_database_->GetCameraIntrinsicsPrior( image_names_of_calibration[i]);
     *view->MutableCameraIntrinsicsPrior() = intrinsics_prior;
   }
 
@@ -308,11 +299,9 @@ bool ReconstructionBuilder::ExtractAndMatchFeatures() {
   std::cout << "==============================================" << std::endl;
 
   std::ofstream outFile(graph_file.c_str());
-  const auto& match_keys =
-      features_and_matches_database_->ImageNamesOfMatches();
+  const auto& match_keys = features_and_matches_database_->ImageNamesOfMatches();
   for (const auto& match_key : match_keys) {
-    const ImagePairMatch& match =
-        features_and_matches_database_->GetImagePairMatch(match_key.first,
+    const ImagePairMatch& match = features_and_matches_database_->GetImagePairMatch(match_key.first,
                                                           match_key.second);
     if (outFile.is_open()) {
       outFile << match_key.first << " " << match_key.second << std::endl;
@@ -356,8 +345,8 @@ bool ReconstructionBuilder::AddTwoViewMatch(const std::string& image1,
   return true;
 }
 
-bool ReconstructionBuilder::BuildReconstruction(
-    std::vector<Reconstruction*>* reconstructions) {
+bool ReconstructionBuilder::BuildReconstruction(std::vector<Reconstruction*>* reconstructions) {
+  
   CHECK_GE(view_graph_->NumViews(), 2) << "At least 2 images must be provided "
                                           "in order to create a "
                                           "reconstruction.";

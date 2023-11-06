@@ -218,9 +218,9 @@ void FeatureExtractorAndMatcher::ExtractAndMatchFeatures() {
   CHECK_NOTNULL(matcher_.get());
 
   // For each image, process the features and add it to the matcher.
-  const int num_threads =
-      std::min(options_.num_threads, static_cast<int>(image_filepaths_.size()));
+  const int num_threads = std::min(options_.num_threads, static_cast<int>(image_filepaths_.size()));
   std::unique_ptr<ThreadPool> thread_pool(new ThreadPool(num_threads));
+
   for (int i = 0; i < image_filepaths_.size(); i++) {
     if (!FileExists(image_filepaths_[i])) {
       LOG(ERROR) << "Could not extract features for " << image_filepaths_[i]
@@ -367,22 +367,20 @@ void FeatureExtractorAndMatcher::
              "descriptors...";
 
   // For each image, find the kNN and add those to our selection for matching.
-  const int num_nearest_neighbors =
-      std::min(static_cast<int>(image_names.size() - 1),
-               options_.num_nearest_neighbors_for_global_descriptor_matching);
+  const int num_nearest_neighbors = std::min(static_cast<int>(image_names.size() - 1),
+                                             options_.num_nearest_neighbors_for_global_descriptor_matching);
 
   std::unordered_map<int, MatchedImages> pairs_to_match;
 
   // Match all pairs of global descriptors. For each image, the K most similar
   // image (i.e. the ones with the lowest distance between global descriptors)
   // are set for matching.
-  std::vector<std::vector<std::pair<float, int>>> global_matching_scores(
-      global_descriptors.size());
+  std::vector<std::vector<std::pair<float, int>>> global_matching_scores(global_descriptors.size());
+  
   for (int i = 0; i < global_descriptors.size(); i++) {
     // Compute the matching scores between all (i, j) pairs.
     for (int j = i + 1; j < global_descriptors.size(); j++) {
-      const float global_feature_match_score =
-          (global_descriptors[i] - global_descriptors[j]).squaredNorm();
+      const float global_feature_match_score = (global_descriptors[i] - global_descriptors[j]).squaredNorm();
       // Add the global feature matching score to both images.
       global_matching_scores[i].emplace_back(global_feature_match_score, j);
       global_matching_scores[j].emplace_back(global_feature_match_score, i);
@@ -400,7 +398,7 @@ void FeatureExtractorAndMatcher::
       // Perform query expansion by adding image i as a candidate match to all of its matches neighbors.
       const auto& neighbors_of_second_id = pairs_to_match[second_id].ranked_matches;
       for (const int neighbor_of_second_id : neighbors_of_second_id) {
-	pairs_to_match[neighbor_of_second_id].expanded_matches.insert(i);
+	        pairs_to_match[neighbor_of_second_id].expanded_matches.insert(i);
       }
 
       // Add the match to both images so that edges are properly utilized for query expansion.
@@ -420,13 +418,13 @@ void FeatureExtractorAndMatcher::
   for (const auto& matches : pairs_to_match) {
     for (const int match : matches.second.ranked_matches) {
       if (matches.first < match) {
-	image_names_to_match.emplace_back(image_names[matches.first], image_names[match]);
+	        image_names_to_match.emplace_back(image_names[matches.first], image_names[match]);
       }
     }
 
     for (const int match : matches.second.expanded_matches) {
       if (matches.first < match) {
-	image_names_to_match.emplace_back(image_names[matches.first], image_names[match]);
+	        image_names_to_match.emplace_back(image_names[matches.first], image_names[match]);
       }
     }
   }
