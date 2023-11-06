@@ -254,7 +254,7 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   for (int i = 0; i < options_.num_retriangulation_iterations + 1; i++) {
 
     std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-    std::cout << "brfore step 8 iter : " << i << positions_.size() << std::endl;
+    std::cout << "brfore step 8 iter : " << i << " " << positions_.size() << std::endl;
     std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
     // Step 8. Triangulate features.
     LOG(INFO) << "Triangulating all features.";
@@ -263,7 +263,7 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
     summary.triangulation_time += timer.ElapsedTimeInSeconds();
 
     std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-    std::cout << "brfore SetUnderconstrainedAsUnestimated iter : " << i << positions_.size() << std::endl;
+    std::cout << "brfore SetUnderconstrainedAsUnestimated iter : " << i << " " << positions_.size() << std::endl;
     std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
 
     SetUnderconstrainedAsUnestimated(reconstruction_);
@@ -283,7 +283,7 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
     }
 
     std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-    std::cout << "brfore step 9 iter : " << i << positions_.size() << std::endl;
+    std::cout << "brfore step 9 iter : " << i  << " " << positions_.size() << std::endl;
     std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
     // Step 9. Bundle Adjustment.
     LOG(INFO) << "Performing bundle adjustment.";

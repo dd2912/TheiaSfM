@@ -392,11 +392,20 @@ bool ReconstructionBuilder::BuildReconstruction(std::vector<Reconstruction*>* re
               << "\n\tTotal time = " << summary.total_time << "\n\n"
               << summary.message;
 
+    std::cout << "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" << std::endl;
+    std::cout << "after log summary: " << reconstruction_->NumTracks() << std::endl;
+    std::cout << "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" << std::endl;
+
     // Remove estimated views and tracks and attempt to create a reconstruction
     // from the remaining unestimated parts.
-    reconstructions->emplace_back(
-        CreateEstimatedSubreconstruction(*reconstruction_));
+    reconstructions->emplace_back( CreateEstimatedSubreconstruction(*reconstruction_));
+    std::cout << "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" << std::endl;
+    std::cout << "after CreateEstimatedSubreconstruction: " << reconstruction_->NumTracks() << std::endl;
+    std::cout << "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" << std::endl;
     RemoveEstimatedViewsAndTracks(reconstruction_.get(), view_graph_.get());
+    std::cout << "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" << std::endl;
+    std::cout << "after RemoveEstimatedViewsAndTracks: " << reconstruction_->NumTracks() << std::endl;
+    std::cout << "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||" << std::endl;
 
     // Exit after the first reconstruction estimation if only the single largest
     // reconstruction is desired.
