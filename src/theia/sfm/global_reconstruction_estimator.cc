@@ -152,10 +152,6 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   Timer timer;
 
 
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-  std::cout << "brfore step 1: " << positions_.size() << std::endl;
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-
   // Step 1. Filter the initial view graph and remove any bad two view
   // geometries.
   LOG(INFO) << "Filtering the intial view graph.";
@@ -167,18 +163,14 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   global_estimator_timings.initial_view_graph_filtering_time =
       timer.ElapsedTimeInSeconds();
 
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-  std::cout << "brfore step 2: " << positions_.size() << std::endl;
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+
   // Step 2. Calibrate any uncalibrated cameras.
   LOG(INFO) << "Calibrating any uncalibrated cameras.";
   timer.Reset();
   CalibrateCameras();
   summary.camera_intrinsics_calibration_time = timer.ElapsedTimeInSeconds();
 
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-  std::cout << "brfore step 3: " << positions_.size() << std::endl;
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+
   // Step 3. Estimate global rotations.
   LOG(INFO) << "Estimating the global rotations of all cameras.";
   timer.Reset();
@@ -190,9 +182,7 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   global_estimator_timings.rotation_estimation_time =
       timer.ElapsedTimeInSeconds();
 
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-  std::cout << "brfore step 4: " << positions_.size() << std::endl;
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+
   // Step 4. Filter bad rotations.
   LOG(INFO) << "Filtering any bad rotation estimations.";
   timer.Reset();
@@ -200,9 +190,7 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   global_estimator_timings.rotation_filtering_time =
       timer.ElapsedTimeInSeconds();
 
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-  std::cout << "brfore step 5: " << positions_.size() << std::endl;
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+
   // Step 5. Optimize relative translations.
   LOG(INFO) << "Optimizing the pairwise translation estimations.";
   timer.Reset();
@@ -210,9 +198,7 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   global_estimator_timings.relative_translation_optimization_time =
       timer.ElapsedTimeInSeconds();
 
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-  std::cout << "brfore step 6: " << positions_.size() << std::endl;
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+
   // Step 6. Filter bad relative translations.
   LOG(INFO) << "Filtering any bad relative translations.";
   timer.Reset();
@@ -220,9 +206,6 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   global_estimator_timings.relative_translation_filtering_time =
       timer.ElapsedTimeInSeconds();
 
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-  std::cout << "brfore step 7: " << positions_.size() << std::endl;
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
   // Step 7. Estimate global positions.
   LOG(INFO) << "Estimating the positions of all cameras.";
   timer.Reset();
@@ -253,24 +236,16 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
   // on the reconstruciton estimator options.
   for (int i = 0; i < options_.num_retriangulation_iterations + 1; i++) {
 
-    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-    std::cout << "brfore step 8 iter : " << i << " " << positions_.size() << std::endl;
-    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
     // Step 8. Triangulate features.
     LOG(INFO) << "Triangulating all features.";
     timer.Reset();
     EstimateStructure();
     summary.triangulation_time += timer.ElapsedTimeInSeconds();
 
-    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-    std::cout << "brfore SetUnderconstrainedAsUnestimated iter : " << i << " " << positions_.size() << std::endl;
-    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
 
     SetUnderconstrainedAsUnestimated(reconstruction_);
     
-    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-    std::cout << "brfore partial bundle adjustment iter : " << i << positions_.size() << std::endl;
-    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+
     // Do a single step of bundle adjustment where only the camera positions and
     // 3D points are refined. This is only done for the very first bundle
     // adjustment iteration.
@@ -282,9 +257,7 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
       summary.bundle_adjustment_time += timer.ElapsedTimeInSeconds();
     }
 
-    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-    std::cout << "brfore step 9 iter : " << i  << " " << positions_.size() << std::endl;
-    std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
+
     // Step 9. Bundle Adjustment.
     LOG(INFO) << "Performing bundle adjustment.";
     timer.Reset();
@@ -301,9 +274,6 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
         reconstruction_);
     LOG(INFO) << num_points_removed << " outlier points were removed.";
   }
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
-  std::cout << "after step 9: " << positions_.size() << std::endl;
-  std::cout << "///////////////////////////////////////////////////////////////////////////////" << std::endl;
   // Set the output parameters.
   GetEstimatedViewsFromReconstruction(*reconstruction_,
                                       &summary.estimated_views);
