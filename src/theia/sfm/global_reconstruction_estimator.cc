@@ -242,10 +242,8 @@ ReconstructionEstimatorSummary GlobalReconstructionEstimator::Estimate(
     EstimateStructure();
     summary.triangulation_time += timer.ElapsedTimeInSeconds();
 
-
     SetUnderconstrainedAsUnestimated(reconstruction_);
-    
-
+  
     // Do a single step of bundle adjustment where only the camera positions and
     // 3D points are refined. This is only done for the very first bundle
     // adjustment iteration.
@@ -325,8 +323,7 @@ bool GlobalReconstructionEstimator::FilterInitialViewGraph() {
   std::unordered_set<ViewIdPair> view_pairs_to_remove;
   const auto& view_pairs = view_graph_->GetAllEdges();
   for (const auto& view_pair : view_pairs) {
-    if (view_pair.second.num_verified_matches <
-        options_.min_num_two_view_inliers) {
+    if (view_pair.second.num_verified_matches < options_.min_num_two_view_inliers) {
       view_pairs_to_remove.insert(view_pair.first);
     }
   }
