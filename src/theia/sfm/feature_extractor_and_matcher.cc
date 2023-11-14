@@ -250,15 +250,12 @@ void FeatureExtractorAndMatcher::ProcessImage(const int i) {
 
   // Get the camera intrinsics prior if it was provided.
   CameraIntrinsicsPrior intrinsics;
-  if (features_and_matches_database_->ContainsCameraIntrinsicsPrior(
-          image_filename)) {
-    intrinsics = features_and_matches_database_->GetCameraIntrinsicsPrior(
-        image_filename);
+  if (features_and_matches_database_->ContainsCameraIntrinsicsPrior(image_filename)) {
+    intrinsics = features_and_matches_database_->GetCameraIntrinsicsPrior(image_filename);
   }
 
   // Get the associated mask if it was provided.
-  const std::string mask_filepath =
-      FindWithDefault(image_masks_, image_filepath, "");
+  const std::string mask_filepath = FindWithDefault(image_masks_, image_filepath, "");
 
   // Extract an EXIF focal length if it was not provided.
   if (!intrinsics.focal_length.is_set) {
@@ -278,16 +275,14 @@ void FeatureExtractorAndMatcher::ProcessImage(const int i) {
   // Early exit if no EXIF calibration exists and we are only processing
   // calibration views.
   if (options_.only_calibrated_views && !intrinsics.focal_length.is_set) {
-    LOG(INFO) << "Image " << image_filepath
-              << " did not contain an EXIF focal length. Skipping this image.";
+    LOG(INFO) << "Image " << image_filepath  << " did not contain an EXIF focal length. Skipping this image.";
     return;
   } else {
     LOG(INFO) << "Image " << image_filepath
               << " is initialized with the focal length: "
               << intrinsics.focal_length.value[0];
     // Insert or update the value of the intrinsics.
-    features_and_matches_database_->PutCameraIntrinsicsPrior(image_filename,
-                                                             intrinsics);
+    features_and_matches_database_->PutCameraIntrinsicsPrior(image_filename, intrinsics);
   }
 
   // Extract the features if necessary.
@@ -316,11 +311,9 @@ void FeatureExtractorAndMatcher::ProcessImage(const int i) {
   // Add the descriptors to the global image descriptor extractor for training
   // if using a global image descriptor extractor.
   if (options_.select_image_pairs_with_global_image_descriptor_matching) {
-    const KeypointsAndDescriptors& features =
-        features_and_matches_database_->GetFeatures(image_filename);
+    const KeypointsAndDescriptors& features = features_and_matches_database_->GetFeatures(image_filename);
     CHECK_GT(features.descriptors.size(), 0);
-    global_image_descriptor_extractor_->AddFeaturesForTraining(
-        features.descriptors);
+    global_image_descriptor_extractor_->AddFeaturesForTraining( features.descriptors);
   }
 
   // Add the image to the matcher.
@@ -349,15 +342,13 @@ void FeatureExtractorAndMatcher::ExtractGlobalDesriptors(
   }
 }
 
-void FeatureExtractorAndMatcher::
-    SelectImagePairsWithGlobalDescriptorMatching() {
+void FeatureExtractorAndMatcher::SelectImagePairsWithGlobalDescriptorMatching() {
   // Train the global descriptor extractor based on the input features.
   VLOG(2) << "Training global image descriptor...";
   CHECK(global_image_descriptor_extractor_->Train());
 
   // Get the image filename without the directory.
-  const std::vector<std::string> image_names =
-      features_and_matches_database_->ImageNamesOfFeatures();
+  const std::vector<std::string> image_names = features_and_matches_database_->ImageNamesOfFeatures();
 
   // Extract global image descriptors.
   std::vector<Eigen::VectorXf> global_descriptors;

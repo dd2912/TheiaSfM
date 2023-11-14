@@ -60,6 +60,7 @@
 #endif  // __APPLE__
 
 DEFINE_string(reconstruction, "", "Reconstruction file to be viewed.");
+DEFINE_string(image_directory, "", "Image Directory")
 
 // Containers for the data.
 std::vector<theia::Camera> cameras;
@@ -423,6 +424,7 @@ int main(int argc, char* argv[]) {
   CHECK(ReadReconstruction(FLAGS_reconstruction, reconstruction.get()))
       << "Could not read reconstruction file.";
 
+  std::cout FLAGS_image_directory << std::endl;
   // Centers the reconstruction based on the absolute deviation of 3D points.
   reconstruction->Normalize();
 
