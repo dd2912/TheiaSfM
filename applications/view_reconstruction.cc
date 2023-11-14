@@ -426,7 +426,7 @@ int main(int argc, char* argv[]) {
 
   std::cout << FLAGS_image_directory << std::endl;
   if (FLAGS_image_directory != "") {
-    ColorizeReconstruction(FLAGS_image_directory, 16, reconstruction);
+    ColorizeReconstruction(FLAGS_image_directory, 16, &reconstruction);
 
   }
   // Centers the reconstruction based on the absolute deviation of 3D points.
