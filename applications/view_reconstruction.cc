@@ -60,7 +60,7 @@
 #endif  // __APPLE__
 
 DEFINE_string(reconstruction, "", "Reconstruction file to be viewed.");
-DEFINE_string(image_directory, "", "Image Directory")
+DEFINE_string(image_directory, "", "Image Directory");
 
 // Containers for the data.
 std::vector<theia::Camera> cameras;
