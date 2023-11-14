@@ -424,7 +424,7 @@ int main(int argc, char* argv[]) {
   CHECK(ReadReconstruction(FLAGS_reconstruction, reconstruction.get()))
       << "Could not read reconstruction file.";
 
-  std::cout FLAGS_image_directory << std::endl;
+  std::cout << FLAGS_image_directory << std::endl;
   // Centers the reconstruction based on the absolute deviation of 3D points.
   reconstruction->Normalize();
 
