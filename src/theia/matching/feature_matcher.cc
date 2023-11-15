@@ -147,41 +147,41 @@ void FeatureMatcher::MatchImages() {
 
     /****** DEBUG SAVE PAIRWISE *********/
 
-    std::cout << "options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification " << options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification << std::endl;
+//     std::cout << "options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification " << options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification << std::endl;
 
-    std::ofstream pairwise_results_file("pairwise_results_north1_1_" + options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification + "_new.txt");
-    std::cout << "pairwise_results_" + options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification + "_1000.txt" << std::endl;
-    if (!pairwise_results_file.is_open()) {
-            std::cerr << "Couldn't open the pairwise_results_file!" << std::endl;
-            exit(1);
-        }
+//     std::ofstream pairwise_results_file("pairwise_results_north1_1_" + options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification + "_new.txt");
+//     std::cout << "pairwise_results_" + options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification + "_1000.txt" << std::endl;
+//     if (!pairwise_results_file.is_open()) {
+//             std::cerr << "Couldn't open the pairwise_results_file!" << std::endl;
+//             exit(1);
+//         }
 
-    for(auto pair_to_match : pairs_to_match_) {
+//     for(auto pair_to_match : pairs_to_match_) {
 
-//        int image1_i = stoi(pair_to_match.first.substr(6).substr(0, pair_to_match.first.find_last_of(".")));
-//        int image1_i = stoi(pair_to_match.first.substr(0, pair_to_match.first.find_last_of(".")));
-        int image1_i = stoi(pair_to_match.first.substr(14).substr(0, pair_to_match.first.find_last_of(".")));
-//        int image2_i = stoi(pair_to_match.second.substr(6).substr(0, pair_to_match.second.find_last_of(".")));
-//        int image2_i = stoi(pair_to_match.second.substr(0, pair_to_match.second.find_last_of(".")));
-        int image2_i = stoi(pair_to_match.second.substr(14).substr(0, pair_to_match.second.find_last_of(".")));
+// //        int image1_i = stoi(pair_to_match.first.substr(6).substr(0, pair_to_match.first.find_last_of(".")));
+// //        int image1_i = stoi(pair_to_match.first.substr(0, pair_to_match.first.find_last_of(".")));
+//         int image1_i = stoi(pair_to_match.first.substr(14).substr(0, pair_to_match.first.find_last_of(".")));
+// //        int image2_i = stoi(pair_to_match.second.substr(6).substr(0, pair_to_match.second.find_last_of(".")));
+// //        int image2_i = stoi(pair_to_match.second.substr(0, pair_to_match.second.find_last_of(".")));
+//         int image2_i = stoi(pair_to_match.second.substr(14).substr(0, pair_to_match.second.find_last_of(".")));
 
-        Eigen::Vector3d rotation = feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.rotation_2;
-        Eigen::Vector3d position = feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.position_2;
-        std::cout << pair_to_match.first << " " << pair_to_match.second << std::endl;
-        std::cout << rotation << std::endl;
-        std::cout << "<<" << std::endl;
-        std::cout << feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.computation_time << std::endl;
-        std::cout << "<<" << std::endl;
+//         Eigen::Vector3d rotation = feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.rotation_2;
+//         Eigen::Vector3d position = feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.position_2;
+//         std::cout << pair_to_match.first << " " << pair_to_match.second << std::endl;
+//         std::cout << rotation << std::endl;
+//         std::cout << "<<" << std::endl;
+//         std::cout << feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.computation_time << std::endl;
+//         std::cout << "<<" << std::endl;
 
-        pairwise_results_file << image1_i << " " << image2_i << " " << rotation[0] << " " << rotation[1] << " " << rotation[2] << " " << position[0] << " " << position[1] << " " << position[2] << " " << feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.computation_time << std::endl;
-    }
+//         pairwise_results_file << image1_i << " " << image2_i << " " << rotation[0] << " " << rotation[1] << " " << rotation[2] << " " << position[0] << " " << position[1] << " " << position[2] << " " << feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.computation_time << std::endl;
+//     }
 
-    pairwise_results_file.close();
+//     pairwise_results_file.close();
 
 
-    /****** END DEBUG SAVE PAIRWISE *********/
+//     /****** END DEBUG SAVE PAIRWISE *********/
 
-    exit(1);
+//     exit(1);
 }
 
 void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int end_index) {
