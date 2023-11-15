@@ -67,6 +67,24 @@ double SquaredSampsonDistance(const Matrix3d& F,
   return numerator_sqrt * numerator_sqrt / denominator.squaredNorm();
 }
 
+// Calculates the cosine similarity between Rx and y
+double CosSimRotatedVectors(const Matrix3d& R,
+                            const Vector3d& x,
+                            const Vector3d& y) {
+
+       double cossim = (R * x).dot(y);
+//       if (cossim > 0.9999) {
+//       std::cout << cossim << std::endl;
+//       }
+
+
+       return cossim;
+}
+
+double norm(double x, double y, double z) {
+    return sqrt(x*x + y*y + z*z);
+}
+
 Eigen::Matrix3d CrossProductMatrix(const Vector3d& cross_vec) {
   Matrix3d cross;
   cross << 0.0, -cross_vec.z(), cross_vec.y(),

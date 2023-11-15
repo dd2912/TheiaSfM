@@ -41,6 +41,7 @@
 #include <limits>
 #include <memory>
 #include <vector>
+#include <iostream>
 
 #include "theia/solvers/estimator.h"
 #include "theia/solvers/inlier_support.h"

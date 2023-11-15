@@ -167,11 +167,9 @@ int main(int argc, char* argv[]) {
   THEIA_GFLAGS_NAMESPACE::ParseCommandLineFlags(&argc, &argv, true);
   google::InitGoogleLogging(argv[0]);
 
-  const ReconstructionBuilderOptions options =
-      SetReconstructionBuilderOptions();
+  const ReconstructionBuilderOptions options = SetReconstructionBuilderOptions();
 
-  theia::RocksDbFeaturesAndMatchesDatabase matches_db(
-      FLAGS_feature_matches_db_directory);
+  theia::RocksDbFeaturesAndMatchesDatabase matches_db(FLAGS_feature_matches_db_directory);
 
   ReconstructionBuilder reconstruction_builder(options, &matches_db);
   AddImagesToReconstructionBuilder(&reconstruction_builder);

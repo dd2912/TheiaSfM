@@ -47,6 +47,13 @@ double SquaredSampsonDistance(const Eigen::Matrix3d& F,
                               const Eigen::Vector2d& x,
                               const Eigen::Vector2d& y);
 
+// Calculates the cosine similarity between Rx and y
+double CosSimRotatedVectors(const Eigen::Matrix3d& R,
+                            const Eigen::Vector3d& x,
+                            const Eigen::Vector3d& y);
+
+double norm(double x, double y, double z);
+
 // Returns the cross product matrix of a vector: if cross_vec = [x y z] then
 //                        [ 0  -z   y]
 // cross product matrix = [ z   0  -y]

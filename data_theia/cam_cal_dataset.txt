@@ -1,0 +1,160 @@
+{
+    "priors": [
+        {
+            "CameraIntrinsicsPrior": {
+                "image_name": "frame_0039.png",
+                "focal_length": 896,
+                "principal_point": [
+                    511.5,
+                    217.5
+                ],
+                "camera_intrinsics_type": "PINHOLE",
+                "width": 1024,
+                "height": 436
+            }
+        },
+        {
+            "CameraIntrinsicsPrior": {
+                "image_name": "frame_0040.png",
+                "focal_length": 896,
+                "principal_point": [
+                    511.5,
+                    217.5
+                ],
+                "camera_intrinsics_type": "PINHOLE",
+                "width": 1024,
+                "height": 436
+            }
+        },
+        {
+            "CameraIntrinsicsPrior": {
+                "image_name": "frame_0041.png",
+                "focal_length": 896,
+                "principal_point": [
+                    511.5,
+                    217.5
+                ],
+                "camera_intrinsics_type": "PINHOLE",
+                "width": 1024,
+                "height": 436
+            }
+        },
+        {
+            "CameraIntrinsicsPrior": {
+                "image_name": "frame_0042.png",
+                "focal_length": 896,
+                "principal_point": [
+                    511.5,
+                    217.5
+                ],
+                "camera_intrinsics_type": "PINHOLE",
+                "width": 1024,
+                "height": 436
+            }
+        },
+        {
+            "CameraIntrinsicsPrior": {
+                "image_name": "frame_0043.png",
+                "focal_length": 896,
+                "principal_point": [
+                    511.5,
+                    217.5
+                ],
+                "camera_intrinsics_type": "PINHOLE",
+                "width": 1024,
+                "height": 436
+            }
+        },
+        {
+            "CameraIntrinsicsPrior": {
+                "image_name": "frame_0044.png",
+                "focal_length": 896,
+                "principal_point": [
+                    511.5,
+                    217.5
+                ],
+                "camera_intrinsics_type": "PINHOLE",
+                "width": 1024,
+                "height": 436
+            }
+        },
+        {
+            "CameraIntrinsicsPrior": {
+                "image_name": "frame_0045.png",
+                "focal_length": 896,
+                "principal_point": [
+                    511.5,
+                    217.5
+                ],
+                "camera_intrinsics_type": "PINHOLE",
+                "width": 1024,
+                "height": 436
+            }
+        },
+        {
+            "CameraIntrinsicsPrior": {
+                "image_name": "frame_0046.png",
+                "focal_length": 896,
+                "principal_point": [
+                    511.5,
+                    217.5
+                ],
+                "camera_intrinsics_type": "PINHOLE",
+                "width": 1024,
+                "height": 436
+            }
+        },
+        {
+            "CameraIntrinsicsPrior": {
+                "image_name": "frame_0047.png",
+                "focal_length": 896,
+                "principal_point": [
+                    511.5,
+                    217.5
+                ],
+                "camera_intrinsics_type": "PINHOLE",
+                "width": 1024,
+                "height": 436
+            }
+        },
+        {
+            "CameraIntrinsicsPrior": {
+                "image_name": "frame_0048.png",
+                "focal_length": 896,
+                "principal_point": [
+                    511.5,
+                    217.5
+                ],
+                "camera_intrinsics_type": "PINHOLE",
+                "width": 1024,
+                "height": 436
+            }
+        },
+        {
+            "CameraIntrinsicsPrior": {
+                "image_name": "frame_0049.png",
+                "focal_length": 896,
+                "principal_point": [
+                    511.5,
+                    217.5
+                ],
+                "camera_intrinsics_type": "PINHOLE",
+                "width": 1024,
+                "height": 436
+            }
+        },
+        {
+            "CameraIntrinsicsPrior": {
+                "image_name": "frame_0050.png",
+                "focal_length": 896,
+                "principal_point": [
+                    511.5,
+                    217.5
+                ],
+                "camera_intrinsics_type": "PINHOLE",
+                "width": 1024,
+                "height": 436
+            }
+        }
+    ]
+}

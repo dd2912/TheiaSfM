@@ -41,6 +41,8 @@
 #include <ceres/rotation.h>
 #include <glog/logging.h>
 #include <stdint.h>
+#include <chrono>
+using namespace std::chrono;
 
 #include "theia/io/eigen_serializable.h"
 #include "theia/math/rotation.h"
@@ -59,7 +61,9 @@ class TwoViewInfo {
         position_2(Eigen::Vector3d::Zero()),
         rotation_2(Eigen::Vector3d::Zero()),
         num_verified_matches(0),
-        num_homography_inliers(0) {}
+        num_homography_inliers(0),
+        distance_between_frames(0),
+        computation_time(0.) {}
 
   double focal_length_1;
   double focal_length_2;
@@ -82,6 +86,9 @@ class TwoViewInfo {
   // visibility scores for each image.
   int visibility_score;
 
+  int distance_between_frames;
+  double computation_time;
+
  private:
   // Templated method for disk I/O with cereal. This method tells cereal which
   // data members should be used when reading/writing to/from disk.
@@ -93,7 +100,9 @@ class TwoViewInfo {
        position_2,
        rotation_2,
        num_verified_matches,
-       num_homography_inliers);
+       num_homography_inliers,
+       distance_between_frames,
+       computation_time);
     if (version > 0) {
       ar(visibility_score);
     }

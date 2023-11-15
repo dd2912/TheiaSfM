@@ -9,7 +9,7 @@
 //       notice, this list of conditions and the following disclaimer.
 //
 //     * Redistributions in binary form must reproduce the above
-//       copyright notice, this list of conditions and the following
+//       copyright notice, this list of conditions and the followingmatcher_
 //       disclaimer in the documentation and/or other materials provided
 //       with the distribution.
 //
@@ -135,6 +135,7 @@ class FeatureExtractorAndMatcher {
   // to perform feature matching on. This dramatically speeds up the matching
   // pipeline over N^2 matching.
   void SelectImagePairsWithGlobalDescriptorMatching();
+  void SelectImagePairsBasedOnDistance();
   void ExtractGlobalDesriptors(
       const std::vector<std::string>& image_names,
       std::vector<Eigen::VectorXf>* global_descriptors);

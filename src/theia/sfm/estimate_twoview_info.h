@@ -70,6 +70,9 @@ struct EstimateTwoViewInfoOptions {
   int min_ransac_iterations = 10;
   int max_ransac_iterations = 1000;
   bool use_mle = true;
+
+  std::string geometry_verification = "camera_pose";
+  int geometry_verification_use_both = 10;
 };
 
 // Estimates two view info for the given view pair from the correspondences. The

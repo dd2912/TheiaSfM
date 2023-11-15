@@ -110,6 +110,7 @@ template <typename DatumType, typename ModelType> class Estimator {
     std::vector<int> inliers;
     inliers.reserve(data.size());
     for (int i = 0; i < data.size(); i++) {
+    std::cout << "Error(data[i], model) " << Error(data[i], model) << " error_threshold " << error_threshold <<std::endl;
       if (Error(data[i], model) < error_threshold) {
         inliers.push_back(i);
       }

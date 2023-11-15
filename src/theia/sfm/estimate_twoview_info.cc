@@ -44,7 +44,10 @@
 #include "theia/sfm/camera/camera.h"
 #include "theia/sfm/camera_intrinsics_prior.h"
 #include "theia/sfm/estimators/estimate_relative_pose.h"
+#include "theia/sfm/estimators/estimate_rotation_with_no_translation.h"
+#include "theia/sfm/estimators/estimate_optimal_rotation.h"
 #include "theia/sfm/estimators/estimate_uncalibrated_relative_pose.h"
+#include "theia/sfm/estimators/estimate_relative_pose_with_known_orientation.h"
 #include "theia/sfm/pose/util.h"
 #include "theia/sfm/reconstruction_estimator_utils.h"
 #include "theia/sfm/set_camera_intrinsics_from_priors.h"
@@ -135,55 +138,254 @@ bool EstimateTwoViewInfoCalibrated(
     const std::vector<FeatureCorrespondence>& correspondences,
     TwoViewInfo* twoview_info,
     std::vector<int>* inlier_indices) {
-  // Normalize features w.r.t focal length.
-  std::vector<FeatureCorrespondence> normalized_correspondences;
-  NormalizeFeatures(
-      intrinsics1, intrinsics2, correspondences, &normalized_correspondences);
 
-  // Set the ransac parameters.
-  RansacParameters ransac_options;
-  ransac_options.rng = options.rng;
-  ransac_options.failure_probability = 1.0 - options.expected_ransac_confidence;
-  ransac_options.min_iterations = options.min_ransac_iterations;
-  ransac_options.max_iterations = options.max_ransac_iterations;
+    RelativePose relative_pose;
+    RansacSummary summary;
 
-  // Compute the sampson error threshold to account for the resolution of the
-  // images.
-  const double max_sampson_error_pixels1 =
-      ComputeResolutionScaledThreshold(options.max_sampson_error_pixels,
+    // Normalize features w.r.t focal length.
+    std::vector<FeatureCorrespondence> normalized_correspondences;
+    NormalizeFeatures(intrinsics1, intrinsics2, correspondences, &normalized_correspondences);
+
+    // Compute the sampson error threshold to account for the resolution of the images.
+    const double max_sampson_error_pixels1 =
+        ComputeResolutionScaledThreshold(options.max_sampson_error_pixels,
                                        intrinsics1.image_width,
                                        intrinsics1.image_height);
-  const double max_sampson_error_pixels2 =
-      ComputeResolutionScaledThreshold(options.max_sampson_error_pixels,
-                                       intrinsics2.image_width,
-                                       intrinsics2.image_height);
-  ransac_options.error_thresh =
-      max_sampson_error_pixels1 * max_sampson_error_pixels2 /
-      (intrinsics1.focal_length.value[0] * intrinsics2.focal_length.value[0]);
-  ransac_options.use_mle = options.use_mle;
+    const double max_sampson_error_pixels2 =
+        ComputeResolutionScaledThreshold(options.max_sampson_error_pixels,
+                                               intrinsics2.image_width,
+                                               intrinsics2.image_height);
 
-  RelativePose relative_pose;
-  RansacSummary summary;
-  if (!EstimateRelativePose(ransac_options,
-                            options.ransac_type,
-                            normalized_correspondences,
-                            &relative_pose,
-                            &summary)) {
-    return false;
-  }
+    if(options.geometry_verification == "relative_pose") {
+    // if(twoview_info->distance_between_frames > options.geometry_verification_use_both) {
+        std::cout << "twoview_info->distance_between_frames " << twoview_info->distance_between_frames << std::endl;
+        std::cout << "options.geometry_verification_use_both " << options.geometry_verification_use_both << std::endl;
+        std::cout << "relative_pose"  << std::endl;
+      // Set the ransac parameters.
+      RansacParameters ransac_options;
+      ransac_options.rng = options.rng;
+      ransac_options.failure_probability = 1.0 - options.expected_ransac_confidence;
+      ransac_options.min_iterations = options.min_ransac_iterations;
+      ransac_options.max_iterations = options.max_ransac_iterations;
+//      ransac_options.min_iterations = 1000; // options.min_ransac_iterations;
+//      ransac_options.max_iterations = 1000; // options.max_ransac_iterations;
 
-  AngleAxisd rotation(relative_pose.rotation);
 
-  // Set the twoview info.
-  twoview_info->rotation_2 = rotation.angle() * rotation.axis();
-  twoview_info->position_2 = relative_pose.position;
-  twoview_info->focal_length_1 = intrinsics1.focal_length.value[0];
-  twoview_info->focal_length_2 = intrinsics2.focal_length.value[0];
-  twoview_info->num_verified_matches = summary.inliers.size();
-  twoview_info->visibility_score = ComputeVisibilityScoreOfInliers(
-      intrinsics1, intrinsics2, correspondences, *inlier_indices);
+        ransac_options.error_thresh =
+        max_sampson_error_pixels1 * max_sampson_error_pixels2 /
+        (intrinsics1.focal_length.value[0] * intrinsics2.focal_length.value[0]);
+        ransac_options.use_mle = options.use_mle;
 
-  *inlier_indices = summary.inliers;
+
+      if (!EstimateRelativePose(ransac_options,
+                                options.ransac_type,
+                                normalized_correspondences,
+                                &relative_pose,
+                                &summary)) {
+        return false;
+      }
+
+
+
+    AngleAxisd rotation(relative_pose.rotation);
+
+      // Set the twoview info.
+      twoview_info->rotation_2 = rotation.angle() * rotation.axis();
+      twoview_info->position_2 = relative_pose.position;
+      twoview_info->focal_length_1 = intrinsics1.focal_length.value[0];
+      twoview_info->focal_length_2 = intrinsics2.focal_length.value[0];
+      twoview_info->num_verified_matches = summary.inliers.size();
+      twoview_info->visibility_score = ComputeVisibilityScoreOfInliers(
+          intrinsics1, intrinsics2, correspondences, *inlier_indices
+          );
+
+      *inlier_indices = summary.inliers;
+
+
+    } else if (options.geometry_verification == "rotation") {
+//    } else if (twoview_info->distance_between_frames <= options.geometry_verification_use_both) {
+
+        std::cout << "twoview_info->distance_between_frames " << twoview_info->distance_between_frames << std::endl;
+        std::cout << "options.geometry_verification_use_both " << options.geometry_verification_use_both << std::endl;
+        std::cout << "rotation"  << std::endl;
+
+       /***
+            ROTATION
+       ***/
+
+      // Set the rotation ransac parameters.
+      RansacParameters ransac_options_rotation;
+      ransac_options_rotation.rng = options.rng;
+      ransac_options_rotation.failure_probability = 1.0 - options.expected_ransac_confidence;
+      ransac_options_rotation.min_iterations = options.min_ransac_iterations;
+      ransac_options_rotation.max_iterations = options.max_ransac_iterations;
+//      ransac_options_rotation.min_iterations = 1000; // options.min_ransac_iterations;
+//      ransac_options_rotation.max_iterations = 1000; // options.max_ransac_iterations;
+    //  ransac_options.use_mle = options.use_mle;
+      ransac_options_rotation.use_mle = 0;
+      ransac_options_rotation.error_thresh  = 1 - 0.9999999;
+
+
+      if (!EstimateRotationWithNoTranslation(ransac_options_rotation,
+          options.ransac_type,
+          normalized_correspondences,
+          &relative_pose,
+          &summary)) {
+
+            std::cout << "NO ROTATION" << std::endl;
+            exit(1);
+            return false;
+        }
+
+
+       /*****
+
+      OPTIMIZE ROTATION
+
+
+       ******/
+
+
+//       std::cout << "summary.inliers.size() " << summary.inliers.size() << std::endl;
+//       std::cout << "normalized_correspondences.size() " << normalized_correspondences.size() << std::endl;
+
+
+        std::vector<FeatureCorrespondence> normalized_correspondences_inliers;
+
+        for(int i : summary.inliers) {
+            normalized_correspondences_inliers.push_back(normalized_correspondences[i]);
+        }
+
+//        std::cout << "normalized_correspondences_inliers.size() " << normalized_correspondences_inliers.size() << std::endl;
+//        std::cout << "Rotation before" << std::endl;
+//        std::cout << relative_pose.rotation << std::endl;
+
+        EstimateOptimalRotation(normalized_correspondences_inliers, &relative_pose);
+
+//        std::cout << "Rotation after" << std::endl;
+//        std::cout << relative_pose.rotation << std::endl;
+
+
+
+//        exit(1);
+
+
+       /***
+            TRANSLATION
+       ***/
+
+
+
+
+//       std::cout  << relative_pose.rotation  << std::end;
+       /***  DEBUG ***/
+
+//       std::cout << relative_pose.rotation << std::endl;
+
+
+//       relative_pose.rotation << 0.99496093, -0.02273345, 0.09765421,
+//                                 0.02487534,  0.99947516,-0.02077136,
+//                                -0.09713088,  0.02309615, 0.99500296;
+
+       /***  END DEBUG ***/
+
+//        std::cout << relative_pose.rotation << std::endl;
+
+
+
+//1.1 5.6 1.3
+
+
+
+      RansacSummary summary_translation;
+
+     // Set the translation ransac parameters.
+       RansacParameters ransac_options_translation;
+       ransac_options_translation.rng = options.rng;
+       ransac_options_translation.failure_probability = 1.0 - options.expected_ransac_confidence;
+       ransac_options_translation.min_iterations = options.min_ransac_iterations;
+       ransac_options_translation.max_iterations = options.max_ransac_iterations;
+     //  ransac_options.use_mle = options.use_mle;
+       ransac_options_translation.use_mle = 0;
+       ransac_options_translation.error_thresh  = max_sampson_error_pixels1 * max_sampson_error_pixels2 / (intrinsics1.focal_length.value[0] * intrinsics2.focal_length.value[0]);
+        ransac_options_translation.error_thresh /= 100;
+
+    std::vector<FeatureCorrespondence> rotated_normalized_correspondences;
+    for (FeatureCorrespondence corr : normalized_correspondences) {
+
+//    for (int i : summary.inliers) {
+//        FeatureCorrespondence corr = normalized_correspondences[i];
+
+        Eigen::Vector3d feature2_3D;
+        feature2_3D << corr.feature2(0), corr.feature2(1), 1;
+        Eigen::Vector3d feature2_3D_rotated = relative_pose.rotation.transpose() * feature2_3D;
+        Eigen::Vector2d feature2_rotated;
+        feature2_rotated << feature2_3D_rotated[0] / feature2_3D_rotated[2], feature2_3D_rotated[1] /feature2_3D_rotated[2];
+
+//        std::cout << "feature1 " << corr.feature1[0] << " " << corr.feature1[1] << std::endl;
+//        std::cout << "feature2rotated " << feature2_rotated[0] << " " << feature2_rotated[1] << std::endl;
+//        std::cout << "feature2 " << corr.feature2[0] << " " << corr.feature2[1] << std::endl;
+//        std::cout << "----------------" << std::endl;
+
+        rotated_normalized_correspondences.push_back(FeatureCorrespondence(
+            Feature(corr.feature1[0], corr.feature1[1]),
+            Feature(feature2_rotated[0], feature2_rotated[1])
+        ));
+    }
+
+    Eigen::Vector3d relative_camera2_position;
+
+//    std::cout << typeid(rotated_normalized_correspondences).name() << std::endl;
+//    std::cout << "relative_camera2_position before " << relative_camera2_position << std::endl;
+
+     if (!EstimateRelativePoseWithKnownOrientation(
+               ransac_options_translation,
+               options.ransac_type,
+               rotated_normalized_correspondences,
+               &relative_camera2_position,
+               &summary_translation)) {
+            std::cout << "NO TRANSLATION" << std::endl;
+            exit(1);
+         return false;
+     }
+
+    std::cout << "relative_camera2_position after " << relative_camera2_position << std::endl;
+    std::cout << "Rotation inliers: " << summary.inliers.size() << " / " << normalized_correspondences.size() << std::endl;
+    std::cout << "Translation inliers: " << summary_translation.inliers.size() << " / " << rotated_normalized_correspondences.size() << std::endl;
+
+    // Union of inliers
+
+    std::vector<int> union_inliers;
+
+    for(int i : summary.inliers) {
+        union_inliers.push_back(i);
+    }
+
+     for (const auto &elem : summary_translation.inliers) {
+        if (std::find(union_inliers.begin(), union_inliers.end(), elem) == union_inliers.end()) {
+            union_inliers.push_back(elem);
+        }
+    }
+
+//    std::cout << "Union: " << union_inliers.size() << " / " << rotated_normalized_correspondences.size() << std::endl;
+
+    AngleAxisd rotation(relative_pose.rotation);
+
+      // Set the twoview info.
+      twoview_info->rotation_2 = rotation.angle() * rotation.axis();
+      twoview_info->position_2 = relative_camera2_position;
+      twoview_info->focal_length_1 = intrinsics1.focal_length.value[0];
+      twoview_info->focal_length_2 = intrinsics2.focal_length.value[0];
+      twoview_info->num_verified_matches = union_inliers.size();
+      twoview_info->visibility_score = ComputeVisibilityScoreOfInliers(
+          intrinsics1, intrinsics2, correspondences, *inlier_indices);
+
+      *inlier_indices = union_inliers;
+
+   }
+
+
+// exit(1);
 
   return true;
 }
@@ -261,12 +463,12 @@ bool EstimateTwoViewInfo(
 
   // Case where both views are calibrated.
   if (intrinsics1.focal_length.is_set && intrinsics2.focal_length.is_set) {
-    return EstimateTwoViewInfoCalibrated(options,
-                                         intrinsics1,
-                                         intrinsics2,
-                                         correspondences,
-                                         twoview_info,
-                                         inlier_indices);
+        return EstimateTwoViewInfoCalibrated(options,
+             intrinsics1,
+             intrinsics2,
+             correspondences,
+             twoview_info,
+             inlier_indices);
   }
 
   // Only one of the focal lengths is set.
@@ -289,6 +491,9 @@ bool EstimateTwoViewInfo(
                                          correspondences,
                                          twoview_info,
                                          inlier_indices);
+
+
+
 }
 
 }  // namespace theia

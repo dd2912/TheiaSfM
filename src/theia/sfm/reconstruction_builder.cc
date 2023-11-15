@@ -185,20 +185,18 @@ ReconstructionBuilder::ReconstructionBuilder(
   feam_options.min_num_inlier_matches = options_.min_num_inlier_matches;
   feam_options.matching_strategy = options_.matching_strategy;
   feam_options.feature_matcher_options = options_.matching_options;
-  feam_options.feature_matcher_options.geometric_verification_options
-      .min_num_inlier_matches = options_.min_num_inlier_matches;
-  feam_options.feature_matcher_options.geometric_verification_options
-      .estimate_twoview_info_options.rng = options_.rng;
+  feam_options.feature_matcher_options.geometric_verification_options.min_num_inlier_matches = options_.min_num_inlier_matches;
+  feam_options.feature_matcher_options.geometric_verification_options.estimate_twoview_info_options.rng = options_.rng;
+
+//  feam_options.geometry_verification = options_.matching_strategy.geometry_verification;
+
+//  std::cout << "options_.matching_options.geometry_verification " << options_.matching_options.geometry_verification <<std::endl;
 
   // Global descriptor matching settings.
-  feam_options.select_image_pairs_with_global_image_descriptor_matching =
-      options_.select_image_pairs_with_global_image_descriptor_matching;
-  feam_options.num_nearest_neighbors_for_global_descriptor_matching =
-      options_.num_nearest_neighbors_for_global_descriptor_matching;
-  feam_options.num_gmm_clusters_for_fisher_vector =
-      options_.num_gmm_clusters_for_fisher_vector;
-  feam_options.max_num_features_for_fisher_vector_training =
-      options_.max_num_features_for_fisher_vector_training;
+  feam_options.select_image_pairs_with_global_image_descriptor_matching = options_.select_image_pairs_with_global_image_descriptor_matching;
+  feam_options.num_nearest_neighbors_for_global_descriptor_matching = options_.num_nearest_neighbors_for_global_descriptor_matching;
+  feam_options.num_gmm_clusters_for_fisher_vector = options_.num_gmm_clusters_for_fisher_vector;
+  feam_options.max_num_features_for_fisher_vector_training = options_.max_num_features_for_fisher_vector_training;
 
   feature_extractor_and_matcher_.reset(new FeatureExtractorAndMatcher(
       feam_options, features_and_matches_database_));

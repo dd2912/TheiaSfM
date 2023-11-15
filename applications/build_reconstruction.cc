@@ -81,6 +81,8 @@ DEFINE_string(matching_working_directory,
               "",
               "Directory used during matching to store features for "
               "out-of-core matching.");
+DEFINE_string(geometry_verification, "", "Geometry verification (geometry_verification, rotation or homography).");
+DEFINE_int32(geometry_verification_use_both, 10, "Geometry verification (geometry_verification, rotation or homography).");
 DEFINE_double(lowes_ratio, 0.8, "Lowes ratio used for feature matching.");
 DEFINE_double(max_sampson_error_for_verified_match,
               4.0,
@@ -281,30 +283,22 @@ ReconstructionBuilderOptions SetReconstructionBuilderOptions() {
   options.features_and_matches_database_directory = FLAGS_matching_working_directory;
   options.matching_strategy = StringToMatchingStrategyType(FLAGS_matching_strategy);
   options.matching_options.lowes_ratio = FLAGS_lowes_ratio;
-  options.matching_options.keep_only_symmetric_matches =
-      FLAGS_keep_only_symmetric_matches;
+  options.matching_options.keep_only_symmetric_matches = FLAGS_keep_only_symmetric_matches;
   options.min_num_inlier_matches = FLAGS_min_num_inliers_for_valid_match;
   options.matching_options.perform_geometric_verification = true;
-  options.matching_options.geometric_verification_options
-      .estimate_twoview_info_options.max_sampson_error_pixels =
-      FLAGS_max_sampson_error_for_verified_match;
-  options.matching_options.geometric_verification_options.bundle_adjustment =
-      FLAGS_bundle_adjust_two_view_geometry;
-  options.matching_options.geometric_verification_options
-      .triangulation_max_reprojection_error =
-      FLAGS_triangulation_reprojection_error_pixels;
-  options.matching_options.geometric_verification_options
-      .min_triangulation_angle_degrees = FLAGS_min_triangulation_angle_degrees;
-  options.matching_options.geometric_verification_options
-      .final_max_reprojection_error = FLAGS_max_reprojection_error_pixels;
-  options.select_image_pairs_with_global_image_descriptor_matching =
-      FLAGS_select_image_pairs_with_global_image_descriptor_matching;
-  options.num_nearest_neighbors_for_global_descriptor_matching =
-      FLAGS_num_nearest_neighbors_for_global_descriptor_matching;
-  options.num_gmm_clusters_for_fisher_vector =
-      FLAGS_num_gmm_clusters_for_fisher_vector;
-  options.max_num_features_for_fisher_vector_training =
-      FLAGS_max_num_features_for_fisher_vector_training;
+
+  options.matching_options.geometric_verification_options.estimate_twoview_info_options.geometry_verification = FLAGS_geometry_verification;
+  options.matching_options.geometric_verification_options.estimate_twoview_info_options.geometry_verification_use_both = FLAGS_geometry_verification_use_both;
+
+  options.matching_options.geometric_verification_options.estimate_twoview_info_options.max_sampson_error_pixels = FLAGS_max_sampson_error_for_verified_match;
+  options.matching_options.geometric_verification_options.bundle_adjustment = FLAGS_bundle_adjust_two_view_geometry;
+  options.matching_options.geometric_verification_options.triangulation_max_reprojection_error = FLAGS_triangulation_reprojection_error_pixels;
+  options.matching_options.geometric_verification_options.min_triangulation_angle_degrees = FLAGS_min_triangulation_angle_degrees;
+  options.matching_options.geometric_verification_options.final_max_reprojection_error = FLAGS_max_reprojection_error_pixels;
+  options.select_image_pairs_with_global_image_descriptor_matching = FLAGS_select_image_pairs_with_global_image_descriptor_matching;
+  options.num_nearest_neighbors_for_global_descriptor_matching = FLAGS_num_nearest_neighbors_for_global_descriptor_matching;
+  options.num_gmm_clusters_for_fisher_vector = FLAGS_num_gmm_clusters_for_fisher_vector;
+  options.max_num_features_for_fisher_vector_training = FLAGS_max_num_features_for_fisher_vector_training;
 
   options.min_track_length = FLAGS_min_track_length;
   options.max_track_length = FLAGS_max_track_length;

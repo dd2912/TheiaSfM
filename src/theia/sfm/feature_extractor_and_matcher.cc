@@ -233,7 +233,9 @@ void FeatureExtractorAndMatcher::ExtractAndMatchFeatures() {
   thread_pool.reset(nullptr);
 
   // After all threads complete feature extraction, perform matching.
-  SelectImagePairsWithGlobalDescriptorMatching();
+  // SelectImagePairsWithGlobalDescriptorMatching();
+  SelectImagePairsBasedOnDistance();
+
   // Free up memory.
   global_image_descriptor_extractor_.release();
   
@@ -349,8 +351,7 @@ void FeatureExtractorAndMatcher::ExtractGlobalDesriptors(
   }
 }
 
-void FeatureExtractorAndMatcher::
-    SelectImagePairsWithGlobalDescriptorMatching() {
+void FeatureExtractorAndMatcher::SelectImagePairsWithGlobalDescriptorMatching() {
   // Train the global descriptor extractor based on the input features.
   VLOG(2) << "Training global image descriptor...";
   CHECK(global_image_descriptor_extractor_->Train());
@@ -371,6 +372,9 @@ void FeatureExtractorAndMatcher::
       std::min(static_cast<int>(image_names.size() - 1),
                options_.num_nearest_neighbors_for_global_descriptor_matching);
 
+
+//  std::cout << "num_nearest_neighbors " << num_nearest_neighbors << std::endl;
+
   std::unordered_map<int, MatchedImages> pairs_to_match;
 
   // Match all pairs of global descriptors. For each image, the K most similar
@@ -378,6 +382,10 @@ void FeatureExtractorAndMatcher::
   // are set for matching.
   std::vector<std::vector<std::pair<float, int>>> global_matching_scores(
       global_descriptors.size());
+
+//    std::cout << "global_descriptors.size() " << global_descriptors.size() << std::endl;
+//    std::cout << "image_names.size() " << image_names.size() << std::endl;
+//  exit(1);
   for (int i = 0; i < global_descriptors.size(); i++) {
     // Compute the matching scores between all (i, j) pairs.
     for (int j = i + 1; j < global_descriptors.size(); j++) {
@@ -439,4 +447,156 @@ void FeatureExtractorAndMatcher::
   matcher_->SetImagePairsToMatch(image_names_to_match);
 }
 
+
+
+
+void FeatureExtractorAndMatcher::SelectImagePairsBasedOnDistance() {
+    // Train the global descriptor extractor based on the input features.
+    VLOG(2) << "Training global image descriptor...";
+    CHECK(global_image_descriptor_extractor_->Train());
+
+    // Get the image filename without the directory.
+    const std::vector<std::string> image_names = features_and_matches_database_->ImageNamesOfFeatures();
+
+//    for(auto str : image_names) {
+//        std::cout << str << std::endl;
+//    }
+
+    // For each image, find the kNN and add those to our selection for matching.
+    const int num_nearest_neighbors = std::min(
+        static_cast<int>(image_names.size() - 1),
+        options_.num_nearest_neighbors_for_global_descriptor_matching
+    );
+
+
+      // Collect all matches into one container.
+      std::vector<std::pair<std::string, std::string>> image_names_to_match;
+      image_names_to_match.reserve(num_nearest_neighbors * image_names.size());
+
+
+
+//  std::cout << "num_nearest_neighbors " << num_nearest_neighbors << std::endl;
+
+     for(int i = 0; i < image_names.size(); i++) {
+
+
+         int first_half = round((float) num_nearest_neighbors / 2);
+         int second_half = num_nearest_neighbors - first_half;
+         int start_index = i - first_half;
+         int end_index = i + second_half;
+
+
+         if(start_index < 0) {
+              int diff = -start_index;
+              start_index = 0;
+              end_index += diff;
+         }
+
+         if(end_index >= image_names.size()) {
+             int diff = end_index - (image_names.size()-1);
+             end_index = image_names.size()-1;
+             start_index -= diff;
+        }
+
+          for(int j = start_index; j <= end_index; j++) {
+
+                if(i == j) {
+                    continue;
+                }
+
+//                std::cout << image_names[i] << " " << image_names[j] << std::endl;
+                image_names_to_match.emplace_back(image_names[i], image_names[j]);
+                image_names_to_match.emplace_back(image_names[j], image_names[i]);
+
+          }
+
+     }
+
+
+
+
+//
+//
+//  std::unordered_map<int, MatchedImages> pairs_to_match;
+//
+//  // Match all pairs of global descriptors. For each image, the K most similar
+//  // image (i.e. the ones with the lowest distance between global descriptors)
+//  // are set for matching.
+//  std::vector<std::vector<std::pair<float, int>>> global_matching_scores(
+//      global_descriptors.size());
+//  for (int i = 0; i < global_descriptors.size(); i++) {
+//    // Compute the matching scores between all (i, j) pairs.
+//    for (int j = i + 1; j < global_descriptors.size(); j++) {
+//      const float global_feature_match_score =
+//          (global_descriptors[i] - global_descriptors[j]).squaredNorm();
+//      // Add the global feature matching score to both images.
+//      global_matching_scores[i].emplace_back(global_feature_match_score, j);
+//      global_matching_scores[j].emplace_back(global_feature_match_score, i);
+//    }
+//
+//    // Find the top K matching results for image i.
+//    std::partial_sort(global_matching_scores[i].begin(),
+//                      global_matching_scores[i].begin() + num_nearest_neighbors,
+//                      global_matching_scores[i].end());
+//
+//    // Add each of the kNN to the output indices.
+//    for (int j = 0; j < num_nearest_neighbors; j++) {
+//      const int second_id = global_matching_scores[i][j].second;
+//
+//      // Perform query expansion by adding image i as a candidate match to all of its matches neighbors.
+//      const auto& neighbors_of_second_id = pairs_to_match[second_id].ranked_matches;
+//      for (const int neighbor_of_second_id : neighbors_of_second_id) {
+//	pairs_to_match[neighbor_of_second_id].expanded_matches.insert(i);
+//      }
+//
+//      // Add the match to both images so that edges are properly utilized for query expansion.
+//      pairs_to_match[i].ranked_matches.insert(second_id);
+//      pairs_to_match[second_id].ranked_matches.insert(i);
+//
+//    }
+//
+//    // Remove the matching scores for image i to free up memory.
+//    global_matching_scores[i].clear();
+//  }
+
+
+
+
+//  for (const auto& matches : pairs_to_match) {
+//    for (const int match : matches.second.ranked_matches) {
+//      if (matches.first < match) {
+//	image_names_to_match.emplace_back(image_names[matches.first], image_names[match]);
+//      }
+//    }
+//
+//    for (const int match : matches.second.expanded_matches) {
+//      if (matches.first < match) {
+//	image_names_to_match.emplace_back(image_names[matches.first], image_names[match]);
+//      }
+//    }
+//  }
+
+  // Uniquify the matches.
+  std::sort(image_names_to_match.begin(), image_names_to_match.end());
+  image_names_to_match.erase(std::unique(image_names_to_match.begin(), image_names_to_match.end()), image_names_to_match.end());
+
+  // Tell the matcher which pairs to match.
+  matcher_->SetImagePairsToMatch(image_names_to_match);
+}
+
 }  // namespace theia
+
+
+
+/***
+
+300 frames
+
+Each frame matches with the 50 nearest.
+So the frame 2 matches with 50 other frames.
+But other frames can have the frame 2 as close pairs (within the 50).
+Therfore the frame 2 cam be matched more than 50 times.
+
+
+
+***/

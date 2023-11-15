@@ -43,6 +43,9 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
+#include <fstream>
+#include <chrono>
+using namespace std::chrono;
 
 #include "theia/image/keypoint_detector/keypoint.h"
 
@@ -96,74 +99,138 @@ void FeatureMatcher::AddImages(const std::vector<std::string>& image_names) {
   }
 }
 
-void FeatureMatcher::SetImagePairsToMatch(
-    const std::vector<std::pair<std::string, std::string>>& pairs_to_match) {
-  pairs_to_match_ = pairs_to_match;
+void FeatureMatcher::SetImagePairsToMatch(const std::vector<std::pair<std::string, std::string>>& pairs_to_match) {
+
+      pairs_to_match_ = pairs_to_match;
+
+      /**** DEBUG ****/
+//      for(auto &p : pairs_to_match) {
+//        if(p.first == "0001.jpg"){
+//            std::cout << p.first << " " << p.second << std::endl;
+//        }
+//        if(p.first == "0002.jpg"){
+//            std::cout << p.first << " " << p.second << std::endl;
+//         }
+//      }
+//
+//      exit(1);
+      /*****   *****/
 }
 
 void FeatureMatcher::MatchImages() {
-  // If SetImagePairsToMatch has not been called, match all image-to-image
-  // pairs.
-  if (pairs_to_match_.empty()) {
-    SelectAllPairs(image_names_, &pairs_to_match_);
-  }
 
-  // Add workers for matching. It is more efficient to let each thread compute
-  // multiple matches at a time than add each matching task to the pool. This is
-  // sort of like OpenMP's dynamic schedule in that it is able to balance
-  // threads fairly efficiently.
-  const int num_matches = pairs_to_match_.size();
-  const int num_threads =
-      std::min(options_.num_threads, static_cast<int>(num_matches));
-  std::unique_ptr<ThreadPool> pool(new ThreadPool(num_threads));
-  const int interval_step =
-      std::min(this->kMaxThreadingStepSize_, num_matches / num_threads);
-  for (int i = 0; i < num_matches; i += interval_step) {
-    const int end_interval = std::min(num_matches, i + interval_step);
-    pool->Add(&FeatureMatcher::MatchAndVerifyImagePairs, this, i, end_interval);
-  }
-  // Wait for all threads to finish.
-  pool.reset(nullptr);
+    // If SetImagePairsToMatch has not been called, match all image-to-image
+    // pairs.
+    if (pairs_to_match_.empty()) {
+        SelectAllPairs(image_names_, &pairs_to_match_);
+    }
 
-  VLOG(1) << "Matched " << feature_and_matches_db_->NumMatches()
+    // Add workers for matching. It is more efficient to let each thread compute
+    // multiple matches at a time than add each matching task to the pool. This is
+    // sort of like OpenMP's dynamic schedule in that it is able to balance
+    // threads fairly efficiently.
+    const int num_matches = pairs_to_match_.size();
+    const int num_threads = std::min(options_.num_threads, static_cast<int>(num_matches));
+    std::unique_ptr<ThreadPool> pool(new ThreadPool(num_threads));
+    const int interval_step = std::min(this->kMaxThreadingStepSize_, num_matches / num_threads);
+    for (int i = 0; i < num_matches; i += interval_step) {
+        const int end_interval = std::min(num_matches, i + interval_step);
+        pool->Add(&FeatureMatcher::MatchAndVerifyImagePairs, this, i, end_interval);
+    }
+    // Wait for all threads to finish.
+    pool.reset(nullptr);
+
+    VLOG(1) << "Matched " << feature_and_matches_db_->NumMatches()
           << " image pairs out of " << num_matches
           << " pairs selected for matching.";
+
+
+    /****** DEBUG SAVE PAIRWISE *********/
+
+    std::cout << "options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification " << options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification << std::endl;
+
+    std::ofstream pairwise_results_file("pairwise_results_north1_1_" + options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification + "_new.txt");
+    std::cout << "pairwise_results_" + options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification + "_1000.txt" << std::endl;
+    if (!pairwise_results_file.is_open()) {
+            std::cerr << "Couldn't open the pairwise_results_file!" << std::endl;
+            exit(1);
+        }
+
+    for(auto pair_to_match : pairs_to_match_) {
+
+//        int image1_i = stoi(pair_to_match.first.substr(6).substr(0, pair_to_match.first.find_last_of(".")));
+//        int image1_i = stoi(pair_to_match.first.substr(0, pair_to_match.first.find_last_of(".")));
+        int image1_i = stoi(pair_to_match.first.substr(14).substr(0, pair_to_match.first.find_last_of(".")));
+//        int image2_i = stoi(pair_to_match.second.substr(6).substr(0, pair_to_match.second.find_last_of(".")));
+//        int image2_i = stoi(pair_to_match.second.substr(0, pair_to_match.second.find_last_of(".")));
+        int image2_i = stoi(pair_to_match.second.substr(14).substr(0, pair_to_match.second.find_last_of(".")));
+
+        Eigen::Vector3d rotation = feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.rotation_2;
+        Eigen::Vector3d position = feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.position_2;
+        std::cout << pair_to_match.first << " " << pair_to_match.second << std::endl;
+        std::cout << rotation << std::endl;
+        std::cout << "<<" << std::endl;
+        std::cout << feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.computation_time << std::endl;
+        std::cout << "<<" << std::endl;
+
+        pairwise_results_file << image1_i << " " << image2_i << " " << rotation[0] << " " << rotation[1] << " " << rotation[2] << " " << position[0] << " " << position[1] << " " << position[2] << " " << feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.computation_time << std::endl;
+    }
+
+    pairwise_results_file.close();
+
+
+    /****** END DEBUG SAVE PAIRWISE *********/
+
+    exit(1);
 }
 
-void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index,
-                                              const int end_index) {
+void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int end_index) {
+
   for (int i = start_index; i < end_index; i++) {
+
+
+
     const std::string image1_name = pairs_to_match_[i].first;
     const std::string image2_name = pairs_to_match_[i].second;
 
-    // Match the image pair. If the pair fails to match then continue to the
-    // next match.
+    // Match the image pair. If the pair fails to match then continue to the next match.
     ImagePairMatch image_pair_match;
     image_pair_match.image1 = image1_name;
     image_pair_match.image2 = image2_name;
 
+    // Compute the distace between the frames
+//    int image1_i = stoi(image1_name.substr(6).substr(0, image1_name.find_last_of(".")));
+//    int image1_i = stoi(image1_name.substr(0, image1_name.find_last_of(".")));
+    int image1_i = stoi(image1_name.substr(14).substr(0, image1_name.find_last_of(".")));
+//    int image2_i = stoi(image2_name.substr(6).substr(0, image2_name.find_last_of(".")));
+//    int image2_i = stoi(image2_name.substr(0, image2_name.find_last_of(".")));
+    int image2_i = stoi(image2_name.substr(14).substr(0, image2_name.find_last_of(".")));
+    image_pair_match.twoview_info.distance_between_frames = abs(image1_i - image2_i);
+
     // Get the keypoints and descriptors from the db.
-    const KeypointsAndDescriptors& features1 =
-        feature_and_matches_db_->GetFeatures(image1_name);
-    const KeypointsAndDescriptors& features2 =
-        feature_and_matches_db_->GetFeatures(image2_name);
+    const KeypointsAndDescriptors& features1 = feature_and_matches_db_->GetFeatures(image1_name);
+    const KeypointsAndDescriptors& features2 = feature_and_matches_db_->GetFeatures(image2_name);
 
     // Compute the visual matches from feature descriptors.
     std::vector<IndexedFeatureMatch> putative_matches;
     if (!MatchImagePair(features1, features2, &putative_matches)) {
-      VLOG(2)
+
+        std::cout << "!MatchImagePair(features1, features2, &putative_matches)" << std::endl;
+        exit(1);
+      VLOG(1)
           << "Could not match a sufficient number of features between images "
           << image1_name << " and " << image2_name;
       continue;
     }
 
+
+    auto time_start = high_resolution_clock::now();
+
     // Perform geometric verification if applicable.
     if (options_.perform_geometric_verification) {
       // If geometric verification fails, do not add the match to the output.
-      if (!GeometricVerification(
-              features1, features2, putative_matches, &image_pair_match)) {
-        VLOG(2) << "Geometric verification between images " << image1_name
-                << " and " << image2_name << " failed.";
+      if (!GeometricVerification(features1, features2, putative_matches, &image_pair_match)) {
+        VLOG(1) << "Geometric verification between images " << image1_name << " and " << image2_name << " failed.";
         continue;
       }
     } else {
@@ -183,16 +250,33 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index,
 
     // Log information about the matching results.
     VLOG(1) << "Images " << image1_name << " and " << image2_name
-            << " were matched with " << image_pair_match.correspondences.size()
+            << " were matched withwere matched with " << image_pair_match.correspondences.size()
             << " verified matches and "
             << image_pair_match.twoview_info.num_homography_inliers
             << " homography matches out of " << putative_matches.size()
             << " putative matches.";
 
+
+//     std::cout << image1_name << " " << image2_name << std::endl;
+//     std::cout << feature_and_matches_db_->GetImagePairMatch(image1_name, image2_name).twoview_info.distance_between_frames << std::endl;
+
+    auto time_stop = high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> computation_time = time_stop - time_start;
+    std::cout << computation_time.count() << std::endl;
+    image_pair_match.twoview_info.distance_between_frames = abs(image1_i - image2_i);
+    image_pair_match.twoview_info.computation_time = computation_time.count();
+
+
     // This operation is thread safe.
     feature_and_matches_db_->PutImagePairMatch(
         image1_name, image2_name, image_pair_match);
+
+
+
   }
+
+
+
 }
 
 bool FeatureMatcher::GeometricVerification(
@@ -200,31 +284,34 @@ bool FeatureMatcher::GeometricVerification(
     const KeypointsAndDescriptors& features2,
     const std::vector<IndexedFeatureMatch>& putative_matches,
     ImagePairMatch* image_pair_match) {
-  CameraIntrinsicsPrior intrinsics1, intrinsics2;
 
-  // Load camera intrinsics if they are available.
-  if (feature_and_matches_db_->ContainsCameraIntrinsicsPrior(
-          features1.image_name)) {
-    intrinsics1 = feature_and_matches_db_->GetCameraIntrinsicsPrior(
-        features1.image_name);
-  }
-  if (feature_and_matches_db_->ContainsCameraIntrinsicsPrior(
-          features2.image_name)) {
-    intrinsics2 = feature_and_matches_db_->GetCameraIntrinsicsPrior(
-        features2.image_name);
-  }
+    CameraIntrinsicsPrior intrinsics1, intrinsics2;
 
-  TwoViewMatchGeometricVerification geometric_verification(
-      options_.geometric_verification_options,
-      intrinsics1,
-      intrinsics2,
-      features1,
-      features2,
-      putative_matches);
+    // Load camera intrinsics if they are available.
+    if (feature_and_matches_db_->ContainsCameraIntrinsicsPrior(features1.image_name)) {
+        intrinsics1 = feature_and_matches_db_->GetCameraIntrinsicsPrior(features1.image_name);
+    }
 
-  // Return whether geometric verification succeeds.
-  return geometric_verification.VerifyMatches(
-      &image_pair_match->correspondences, &image_pair_match->twoview_info);
+    if (feature_and_matches_db_->ContainsCameraIntrinsicsPrior(features2.image_name)) {
+        intrinsics2 = feature_and_matches_db_->GetCameraIntrinsicsPrior(features2.image_name);
+    }
+
+    //  std::cout << "options_.geometric_verification_options " << options_.geometric_verification_options << std::endl;
+    //  std::cout << "options_.geometric_verification_options.geometry_verification " << options_.geometric_verification_options.geometry_verification << std::endl;
+
+    TwoViewMatchGeometricVerification geometric_verification(
+        options_.geometric_verification_options,
+        intrinsics1,
+        intrinsics2,
+        features1,
+        features2,
+        putative_matches);
+
+
+
+    // Return whether geometric verification succeeds.
+    return geometric_verification.VerifyMatches(&image_pair_match->correspondences, &image_pair_match->twoview_info);
+
 }
 
 }  // namespace theia

@@ -125,6 +125,8 @@ set(THEIA_SRC
   sfm/estimators/estimate_radial_distortion_homography.cc
   sfm/estimators/estimate_relative_pose_with_known_orientation.cc
   sfm/estimators/estimate_relative_pose.cc
+  sfm/estimators/estimate_rotation_with_no_translation.cc
+  sfm/estimators/estimate_optimal_rotation.cc
   sfm/estimators/estimate_rigid_transformation_2d_3d.cc
   sfm/estimators/estimate_similarity_transformation_2d_3d.cc
   sfm/estimators/estimate_triangulation.cc
@@ -162,6 +164,7 @@ set(THEIA_SRC
   sfm/pose/essential_matrix_utils.cc
   sfm/pose/five_point_focal_length_radial_distortion.cc
   sfm/pose/five_point_relative_pose.cc
+  sfm/pose/two_point_rotation_with_no_translation.cc
   sfm/pose/four_point_focal_length_helper.cc
   sfm/pose/four_point_focal_length.cc
   sfm/pose/four_point_focal_length_radial_distortion.cc

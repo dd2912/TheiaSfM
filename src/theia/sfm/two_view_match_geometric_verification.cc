@@ -9,7 +9,7 @@
 //       notice, this list of conditions and the following disclaimer.
 //
 //     * Redistributions in binary form must reproduce the above
-//       copyright notice, this list of conditions and the following
+//       copyright notice, this list of conditions and the followingVerifyMatches
 //       disclaimer in the documentation and/or other materials provided
 //       with the distribution.
 //
@@ -113,31 +113,42 @@ void TwoViewMatchGeometricVerification::CreateCorrespondencesFromIndexedMatches(
 bool TwoViewMatchGeometricVerification::VerifyMatches(
     std::vector<FeatureCorrespondence>* verified_matches,
     TwoViewInfo* twoview_info) {
+
   if (matches_.size() < options_.min_num_inlier_matches) {
-    return false;
+  std::cout << "EXIT options_.min_num_inlier_match " << options_.min_num_inlier_matches << std::endl;
+    exit(1);
   }
 
   std::vector<FeatureCorrespondence> correspondences;
   CreateCorrespondencesFromIndexedMatches(&correspondences);
 
   // Estimate a homography (before the matches_ container is modified).
-  twoview_info->num_homography_inliers = CountHomographyInliers();
+
+//  twoview_info->num_homography_inliers = CountHomographyInliers();
+//  std::cout << "NUMBER OF INLIERS FOR THE HOMOGRAPHY " << twoview_info->num_homography_inliers << std::endl;
 
   // Estimate 2-view geometry from feature matches.
   std::vector<int> inlier_indices;
+
   if (!EstimateTwoViewInfo(options_.estimate_twoview_info_options,
                            intrinsics1_,
                            intrinsics2_,
                            correspondences,
                            twoview_info,
                            &inlier_indices)) {
-    return false;
+
+        std::cout << "EstimateTwoViewInfo " << EstimateTwoViewInfo << std::endl;
+            exit(1);
+       return false;
   }
-  VLOG(2) << inlier_indices.size()
+
+  VLOG(1) << inlier_indices.size()
           << " matches passed initial geometric verification out of "
           << matches_.size() << " putative matches.";
 
   if (inlier_indices.size() < options_.min_num_inlier_matches) {
+  std::cout << "EXIT options_.min_num_inlier_matches " << options_.min_num_inlier_matches << std::endl;
+      exit(1);
     return false;
   }
 
@@ -159,7 +170,6 @@ bool TwoViewMatchGeometricVerification::VerifyMatches(
     guided_matching_options.guided_matching_max_distance_pixels =
         options_.guided_matching_max_distance_pixels;
     guided_matching_options.lowes_ratio = options_.guided_matching_lowes_ratio;
-
     GuidedEpipolarMatcher guided_matcher(
         guided_matching_options, camera1_, camera2_, features1_, features2_);
     if (!guided_matcher.GetMatches(&matches_)) {
@@ -172,12 +182,15 @@ bool TwoViewMatchGeometricVerification::VerifyMatches(
       matches_.size() > options_.min_num_inlier_matches) {
     if (!BundleAdjustRelativePose(twoview_info)) {
       return false;
+      std::cout << "BundleAdjustRelativePose FAIL" << std::endl;
     }
   }
 
   // Set the number of verified matches and the output verified_matches.
   CreateCorrespondencesFromIndexedMatches(verified_matches);
   twoview_info->num_verified_matches = verified_matches->size();
+  std::cout << "verified_matches->size() " << verified_matches->size() << std::endl;
+  std::cout << "options_.min_num_inlier_matches " << options_.min_num_inlier_matches << std::endl;
   return verified_matches->size() > options_.min_num_inlier_matches;
 }
 
@@ -265,6 +278,7 @@ bool TwoViewMatchGeometricVerification::BundleAdjustRelativePose(
   TriangulatePoints(&triangulated_points);
 
   // Exit early if there are not enough inliers left.
+
   if (matches_.size() < options_.min_num_inlier_matches) {
     return false;
   }
@@ -326,8 +340,7 @@ bool TwoViewMatchGeometricVerification::BundleAdjustRelativePose(
 // Compute a homography and return the number of inliers. This determines how
 // well a plane fits the two view geometry.
 int TwoViewMatchGeometricVerification::CountHomographyInliers() {
-  const EstimateTwoViewInfoOptions& etvi_options =
-      options_.estimate_twoview_info_options;
+  const EstimateTwoViewInfoOptions& etvi_options = options_.estimate_twoview_info_options;
   RansacParameters homography_params;
   homography_params.rng = etvi_options.rng;
 
