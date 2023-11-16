@@ -274,24 +274,20 @@ bool ReconstructionBuilder::ExtractAndMatchFeatures() {
   feature_extractor_and_matcher_.release();
 
   // Log how many view pairs were geometrically verified.
-  const int num_total_view_pairs =
-      image_filepaths_.size() * (image_filepaths_.size() - 1) / 2;
+  const int num_total_view_pairs = image_filepaths_.size() * (image_filepaths_.size() - 1) / 2;
   LOG(INFO) << features_and_matches_database_->NumMatches() << " of "
             << num_total_view_pairs
             << " view pairs were matched and geometrically verified.";
 
   // Add the EXIF metadata to each view.
   std::vector<std::string> image_filenames(image_filepaths_.size());
-  const auto image_names_of_calibration =
-      features_and_matches_database_->ImageNamesOfCameraIntrinsicsPriors();
+  const auto image_names_of_calibration = features_and_matches_database_->ImageNamesOfCameraIntrinsicsPriors();
+
   for (int i = 0; i < image_names_of_calibration.size(); i++) {
     // Add the camera intrinsic prior information to the view.
-    const ViewId view_id =
-        reconstruction_->ViewIdFromName(image_names_of_calibration[i]);
+    const ViewId view_id = reconstruction_->ViewIdFromName(image_names_of_calibration[i]);
     View* view = reconstruction_->MutableView(view_id);
-    const auto intrinsics_prior =
-        features_and_matches_database_->GetCameraIntrinsicsPrior(
-            image_names_of_calibration[i]);
+    const auto intrinsics_prior = features_and_matches_database_->GetCameraIntrinsicsPrior( image_names_of_calibration[i]);
     *view->MutableCameraIntrinsicsPrior() = intrinsics_prior;
   }
 

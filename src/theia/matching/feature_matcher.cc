@@ -122,6 +122,7 @@ void FeatureMatcher::MatchImages() {
     // If SetImagePairsToMatch has not been called, match all image-to-image
     // pairs.
     if (pairs_to_match_.empty()) {
+        std::cout << "PAIRS TO MATCH IS EMPTY" << std::endl;
         SelectAllPairs(image_names_, &pairs_to_match_);
     }
 
@@ -187,9 +188,6 @@ void FeatureMatcher::MatchImages() {
 void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int end_index) {
 
   for (int i = start_index; i < end_index; i++) {
-
-
-
     const std::string image1_name = pairs_to_match_[i].first;
     const std::string image2_name = pairs_to_match_[i].second;
 
@@ -214,10 +212,7 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
     // Compute the visual matches from feature descriptors.
     std::vector<IndexedFeatureMatch> putative_matches;
     if (!MatchImagePair(features1, features2, &putative_matches)) {
-
-        std::cout << "!MatchImagePair(features1, features2, &putative_matches)" << std::endl;
-        exit(1);
-      VLOG(1)
+          VLOG(1)
           << "Could not match a sufficient number of features between images "
           << image1_name << " and " << image2_name;
       continue;
@@ -238,10 +233,8 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
       // output.
       image_pair_match.correspondences.reserve(putative_matches.size());
       for (int i = 0; i < putative_matches.size(); i++) {
-        const Keypoint& keypoint1 =
-            features1.keypoints[putative_matches[i].feature1_ind];
-        const Keypoint& keypoint2 =
-            features2.keypoints[putative_matches[i].feature2_ind];
+        const Keypoint& keypoint1 = features1.keypoints[putative_matches[i].feature1_ind];
+        const Keypoint& keypoint2 = features2.keypoints[putative_matches[i].feature2_ind];
         image_pair_match.correspondences.emplace_back(
             Feature(keypoint1.x(), keypoint1.y()),
             Feature(keypoint2.x(), keypoint2.y()));
@@ -271,11 +264,7 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
     feature_and_matches_db_->PutImagePairMatch(
         image1_name, image2_name, image_pair_match);
 
-
-
   }
-
-
 
 }
 

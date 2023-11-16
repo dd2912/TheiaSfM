@@ -218,8 +218,7 @@ void FeatureExtractorAndMatcher::ExtractAndMatchFeatures() {
   CHECK_NOTNULL(matcher_.get());
 
   // For each image, process the features and add it to the matcher.
-  const int num_threads =
-      std::min(options_.num_threads, static_cast<int>(image_filepaths_.size()));
+  const int num_threads = std::min(options_.num_threads, static_cast<int>(image_filepaths_.size()));
   std::unique_ptr<ThreadPool> thread_pool(new ThreadPool(num_threads));
   for (int i = 0; i < image_filepaths_.size(); i++) {
     if (!FileExists(image_filepaths_[i])) {
