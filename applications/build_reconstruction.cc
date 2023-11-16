@@ -411,7 +411,7 @@ void AddMatchesToReconstructionBuilder(FeaturesAndMatchesDatabase* features_and_
 
   // Add the matches.
   const auto match_keys = features_and_matches_database->ImageNamesOfMatches();
-  LOG(INFO) << "Loading " << match_keys.size() << " matches from the DB.";
+  //LOG(INFO) << "Loading " << match_keys.size() << " matches from the DB.";
   for (const auto& match_key : match_keys) {
     const theia::ImagePairMatch& match =
         features_and_matches_database->GetImagePairMatch(match_key.first,
