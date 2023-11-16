@@ -183,7 +183,7 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
     if (options_.perform_geometric_verification) {
       // If geometric verification fails, do not add the match to the output.
       if (!GeometricVerification(features1, features2, putative_matches, &image_pair_match)) {
-        VLOG(GLOG_INFO) << "Geometric verification between images " << image1_name << " and " << image2_name << " failed.";
+        VLOG(0) << "Geometric verification between images " << image1_name << " and " << image2_name << " failed.";
         continue;
       }
     } else {
