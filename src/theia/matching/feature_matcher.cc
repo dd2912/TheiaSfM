@@ -243,7 +243,7 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
             << " verified matches and "
             << image_pair_match.twoview_info.num_homography_inliers
             << " homography matches out of " << putative_matches.size()
-            << " putative matches." std::endl;
+            << " putative matches." << std::endl;
 
 
 //     std::cout << image1_name << " " << image2_name << std::endl;
