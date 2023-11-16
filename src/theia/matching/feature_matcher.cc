@@ -238,12 +238,12 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
     }
 
     // Log information about the matching results.
-    VLOG(1) << "Images " << image1_name << " and " << image2_name
+    std::cout << "Images " << image1_name << " and " << image2_name
             << " were matched withwere matched with " << image_pair_match.correspondences.size()
             << " verified matches and "
             << image_pair_match.twoview_info.num_homography_inliers
             << " homography matches out of " << putative_matches.size()
-            << " putative matches.";
+            << " putative matches." std::endl;
 
 
 //     std::cout << image1_name << " " << image2_name << std::endl;
