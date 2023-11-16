@@ -121,7 +121,7 @@ void FeatureMatcher::MatchImages() {
 
     // If SetImagePairsToMatch has not been called, match all image-to-image
     // pairs.
-    std::cout << "Start od MatchImages" <<std::endl;
+    std::cout << "Start of MatchImages " << pairs_to_match_.size() << std::endl;
     if (pairs_to_match_.empty()) {
         std::cout << "PAIRS TO MATCH IS EMPTY" << std::endl;
         SelectAllPairs(image_names_, &pairs_to_match_);
@@ -132,6 +132,7 @@ void FeatureMatcher::MatchImages() {
     // sort of like OpenMP's dynamic schedule in that it is able to balance
     // threads fairly efficiently.
     const int num_matches = pairs_to_match_.size();
+
     const int num_threads = std::min(options_.num_threads, static_cast<int>(num_matches));
     std::unique_ptr<ThreadPool> pool(new ThreadPool(num_threads));
     const int interval_step = std::min(this->kMaxThreadingStepSize_, num_matches / num_threads);
