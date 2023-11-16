@@ -162,8 +162,8 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
     ImagePairMatch image_pair_match;
     image_pair_match.image1 = image1_name;
     image_pair_match.image2 = image2_name;
-
-    std::cout << "=================== " << std::endl;
+    
+    std::cout << image1_name << " " image2_name << std::endl;
     int image1_i = stoi(image1_name.substr(14).substr(0, image1_name.find_last_of(".")));
     int image2_i = stoi(image2_name.substr(14).substr(0, image2_name.find_last_of(".")));
     image_pair_match.twoview_info.distance_between_frames = abs(image1_i - image2_i);
