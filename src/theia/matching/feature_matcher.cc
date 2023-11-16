@@ -145,46 +145,7 @@ void FeatureMatcher::MatchImages() {
 
     VLOG(1) << "Matched " << feature_and_matches_db_->NumMatches()
           << " image pairs out of " << num_matches
-          << " pairs selected for matching.";
-
-
-    /****** DEBUG SAVE PAIRWISE *********/
-
-//     std::cout << "options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification " << options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification << std::endl;
-
-//     std::ofstream pairwise_results_file("pairwise_results_north1_1_" + options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification + "_new.txt");
-//     std::cout << "pairwise_results_" + options_.geometric_verification_options.estimate_twoview_info_options.geometry_verification + "_1000.txt" << std::endl;
-//     if (!pairwise_results_file.is_open()) {
-//             std::cerr << "Couldn't open the pairwise_results_file!" << std::endl;
-//             exit(1);
-//         }
-
-//     for(auto pair_to_match : pairs_to_match_) {
-
-// //        int image1_i = stoi(pair_to_match.first.substr(6).substr(0, pair_to_match.first.find_last_of(".")));
-// //        int image1_i = stoi(pair_to_match.first.substr(0, pair_to_match.first.find_last_of(".")));
-//         int image1_i = stoi(pair_to_match.first.substr(14).substr(0, pair_to_match.first.find_last_of(".")));
-// //        int image2_i = stoi(pair_to_match.second.substr(6).substr(0, pair_to_match.second.find_last_of(".")));
-// //        int image2_i = stoi(pair_to_match.second.substr(0, pair_to_match.second.find_last_of(".")));
-//         int image2_i = stoi(pair_to_match.second.substr(14).substr(0, pair_to_match.second.find_last_of(".")));
-
-//         Eigen::Vector3d rotation = feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.rotation_2;
-//         Eigen::Vector3d position = feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.position_2;
-//         std::cout << pair_to_match.first << " " << pair_to_match.second << std::endl;
-//         std::cout << rotation << std::endl;
-//         std::cout << "<<" << std::endl;
-//         std::cout << feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.computation_time << std::endl;
-//         std::cout << "<<" << std::endl;
-
-//         pairwise_results_file << image1_i << " " << image2_i << " " << rotation[0] << " " << rotation[1] << " " << rotation[2] << " " << position[0] << " " << position[1] << " " << position[2] << " " << feature_and_matches_db_->GetImagePairMatch(pair_to_match.first, pair_to_match.second).twoview_info.computation_time << std::endl;
-//     }
-
-//     pairwise_results_file.close();
-
-
-//     /****** END DEBUG SAVE PAIRWISE *********/
-
-//     exit(1);
+          << " pairs selected for matching.";;
 }
 
 void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int end_index) {
@@ -192,8 +153,6 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
   for (int i = start_index; i < end_index; i++) {
     const std::string image1_name = pairs_to_match_[i].first;
     const std::string image2_name = pairs_to_match_[i].second;
-
-    std::cout << "Match " << image1_name << " with " << image2_name << std::endl;
 
     // Match the image pair. If the pair fails to match then continue to the next match.
     ImagePairMatch image_pair_match;
@@ -206,6 +165,7 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
     image_pair_match.twoview_info.distance_between_frames = abs(image1_i - image2_i);
 
     // Get the keypoints and descriptors from the db.
+
     const KeypointsAndDescriptors& features1 = feature_and_matches_db_->GetFeatures(image1_name);
     const KeypointsAndDescriptors& features2 = feature_and_matches_db_->GetFeatures(image2_name);
 
@@ -223,7 +183,7 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
     if (options_.perform_geometric_verification) {
       // If geometric verification fails, do not add the match to the output.
       if (!GeometricVerification(features1, features2, putative_matches, &image_pair_match)) {
-        VLOG(1) << "Geometric verification between images " << image1_name << " and " << image2_name << " failed.";
+        VLOG(INFO) << "Geometric verification between images " << image1_name << " and " << image2_name << " failed.";
         continue;
       }
     } else {
