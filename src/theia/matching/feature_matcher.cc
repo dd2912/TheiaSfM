@@ -151,6 +151,7 @@ void FeatureMatcher::MatchImages() {
 void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int end_index) {
 
   for (int i = start_index; i < end_index; i++) {
+    std::cout << "start loop " << endl;
     const std::string image1_name = pairs_to_match_[i].first;
     const std::string image2_name = pairs_to_match_[i].second;
 
@@ -165,10 +166,11 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
     image_pair_match.twoview_info.distance_between_frames = abs(image1_i - image2_i);
 
     // Get the keypoints and descriptors from the db.
-
+    std::cout << "get features" << endl;
     const KeypointsAndDescriptors& features1 = feature_and_matches_db_->GetFeatures(image1_name);
     const KeypointsAndDescriptors& features2 = feature_and_matches_db_->GetFeatures(image2_name);
 
+    std::cout << "MatchImagePair " << endl;
     // Compute the visual matches from feature descriptors.
     std::vector<IndexedFeatureMatch> putative_matches;
     if (!MatchImagePair(features1, features2, &putative_matches)) {
@@ -179,6 +181,7 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
 
     auto time_start = high_resolution_clock::now();
 
+    std::cout << "perform_geometric_verification " << options_.perform_geometric_verification  << endl;
     // Perform geometric verification if applicable.
     if (options_.perform_geometric_verification) {
       // If geometric verification fails, do not add the match to the output.
