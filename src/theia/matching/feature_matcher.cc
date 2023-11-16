@@ -188,7 +188,7 @@ void FeatureMatcher::MatchImages() {
 }
 
 void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int end_index) {
-
+  std::cout << "MatchAndVerifyImagePairs " << start_index << " " << end_index << std::endl;
   for (int i = start_index; i < end_index; i++) {
     const std::string image1_name = pairs_to_match_[i].first;
     const std::string image2_name = pairs_to_match_[i].second;
