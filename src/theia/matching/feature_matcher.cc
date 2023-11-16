@@ -193,7 +193,7 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
     const std::string image1_name = pairs_to_match_[i].first;
     const std::string image2_name = pairs_to_match_[i].second;
 
-    std::cout << "Match " << image1_name << " with " << image2_name << endl;
+    std::cout << "Match " << image1_name << " with " << image2_name << std::endl;
 
     // Match the image pair. If the pair fails to match then continue to the next match.
     ImagePairMatch image_pair_match;
