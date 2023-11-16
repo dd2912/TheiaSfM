@@ -283,9 +283,7 @@ void FeatureExtractorAndMatcher::ProcessImage(const int i) {
               << " did not contain an EXIF focal length. Skipping this image.";
     return;
   } else {
-    LOG(INFO) << "Image " << image_filepath
-              << " is initialized with the focal length: "
-              << intrinsics.focal_length.value[0];
+    //LOG(INFO) << "Image " << image_filepath << " is initialized with the focal length: " << intrinsics.focal_length.value[0];
     // Insert or update the value of the intrinsics.
     features_and_matches_database_->PutCameraIntrinsicsPrior(image_filename,
                                                              intrinsics);
@@ -293,8 +291,7 @@ void FeatureExtractorAndMatcher::ProcessImage(const int i) {
 
   // Extract the features if necessary.
   if (features_and_matches_database_->ContainsFeatures(image_filename)) {
-    VLOG(1) << "Loading features for " << image_filename
-            << " from the features and matches database.";
+    //VLOG(1) << "Loading features for " << image_filename << " from the features and matches database.";
   } else {
     // Extract Features.
     KeypointsAndDescriptors features;
