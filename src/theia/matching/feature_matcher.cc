@@ -121,7 +121,6 @@ void FeatureMatcher::MatchImages() {
 
     // If SetImagePairsToMatch has not been called, match all image-to-image
     // pairs.
-    std::cout << "Start of MatchImages " << pairs_to_match_.size() << std::endl;
     if (pairs_to_match_.empty()) {
         std::cout << "PAIRS TO MATCH IS EMPTY" << std::endl;
         SelectAllPairs(image_names_, &pairs_to_match_);
@@ -151,31 +150,23 @@ void FeatureMatcher::MatchImages() {
 void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int end_index) {
 
   for (int i = start_index; i < end_index; i++) {
-    std::cout << "start loop " << std::endl;
     const std::string image1_name = pairs_to_match_[i].first;
     const std::string image2_name = pairs_to_match_[i].second;
-
-
-
 
     // Match the image pair. If the pair fails to match then continue to the next match.
     ImagePairMatch image_pair_match;
     image_pair_match.image1 = image1_name;
     image_pair_match.image2 = image2_name;
     
-    std::cout << image1_name << " " << image2_name << std::endl;
     int image1_i = stoi(image1_name.substr(0, image1_name.find_last_of(".")));
     int image2_i = stoi(image2_name.substr(0, image2_name.find_last_of(".")));
     image_pair_match.twoview_info.distance_between_frames = abs(image1_i - image2_i);
     std::cout << image_pair_match.twoview_info.distance_between_frames << std::endl;
-    std::cout << "+++++++++++++++++++" << std::endl;
 
     // Get the keypoints and descriptors from the db.
-    std::cout << "get features" << std::endl;
     const KeypointsAndDescriptors& features1 = feature_and_matches_db_->GetFeatures(image1_name);
     const KeypointsAndDescriptors& features2 = feature_and_matches_db_->GetFeatures(image2_name);
 
-    std::cout << "MatchImagePair " << std::endl;
     // Compute the visual matches from feature descriptors.
     std::vector<IndexedFeatureMatch> putative_matches;
     if (!MatchImagePair(features1, features2, &putative_matches)) {
@@ -186,7 +177,6 @@ void FeatureMatcher::MatchAndVerifyImagePairs(const int start_index, const int e
 
     auto time_start = high_resolution_clock::now();
 
-    std::cout << "perform_geometric_verification " << options_.perform_geometric_verification  << std::endl;
     // Perform geometric verification if applicable.
     if (options_.perform_geometric_verification) {
       // If geometric verification fails, do not add the match to the output.
