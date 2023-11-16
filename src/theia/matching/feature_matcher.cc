@@ -121,6 +121,7 @@ void FeatureMatcher::MatchImages() {
 
     // If SetImagePairsToMatch has not been called, match all image-to-image
     // pairs.
+    std::cout << "Start od MatchImages" <<std::endl;
     if (pairs_to_match_.empty()) {
         std::cout << "PAIRS TO MATCH IS EMPTY" << std::endl;
         SelectAllPairs(image_names_, &pairs_to_match_);
