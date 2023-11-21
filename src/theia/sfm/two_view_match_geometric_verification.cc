@@ -114,6 +114,10 @@ bool TwoViewMatchGeometricVerification::VerifyMatches(
     std::vector<FeatureCorrespondence>* verified_matches,
     TwoViewInfo* twoview_info) {
 
+  if (matches_.size() < options_.min_num_inlier_matches) {
+    return false;
+  }
+
   std::vector<FeatureCorrespondence> correspondences;
   CreateCorrespondencesFromIndexedMatches(&correspondences);
 
@@ -142,8 +146,7 @@ bool TwoViewMatchGeometricVerification::VerifyMatches(
           << matches_.size() << " putative matches.";
 
   if (inlier_indices.size() < options_.min_num_inlier_matches) {
-    std::cout << "EXIT options_.min_num_inlier_matches " << options_.min_num_inlier_matches << std::endl;
-
+  std::cout << "EXIT options_.min_num_inlier_matches " << options_.min_num_inlier_matches << std::endl;
     return false;
   }
 
