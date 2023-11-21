@@ -137,7 +137,6 @@ bool TwoViewMatchGeometricVerification::VerifyMatches(
                            &inlier_indices)) {
 
         std::cout << "EstimateTwoViewInfo " << EstimateTwoViewInfo << std::endl;
-            exit(1);
        return false;
   }
 
